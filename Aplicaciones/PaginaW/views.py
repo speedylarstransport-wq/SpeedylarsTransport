@@ -14,6 +14,10 @@ def contactanos(request):
     return render(request, 'contactanos.html')
 
 
+
+def error_404(request, url=None):
+    return render(request, '404.html', status=404)
+
 from django.shortcuts import render, redirect
 from django.contrib.auth import authenticate, login, logout
 from django.contrib import messages

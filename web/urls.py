@@ -16,8 +16,10 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path, include
+from Aplicaciones.PaginaW import views
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('',include('Aplicaciones.PaginaW.urls'))
+    path('',include('Aplicaciones.PaginaW.urls')),
+    path('<path:url>', views.error_404),
 ]
