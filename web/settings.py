@@ -151,6 +151,7 @@ STORAGES = {
 }
 
 CSRF_TRUSTED_ORIGINS = ['https://web-production-38718.up.railway.app','https://speedylars.com','https://www.speedylars.com']
+SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
 #LOGIN_URL = 'login'
 #LOGIN_REDIRECT_URL = 'inicio'
 
