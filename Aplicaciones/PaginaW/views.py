@@ -1,8 +1,40 @@
 from django.shortcuts import render
 
-# Create your views here.
+
+from django.core.mail import send_mail
+from django.shortcuts import render, redirect
+from django.conf import settings
+
 def inicio(request):
-    return render(request, 'inicio.html')
+
+    if request.method == "POST":
+        nombre = request.POST.get("nombre")
+        correo = request.POST.get("correo")
+        telefono = request.POST.get("telefono")
+        empresa = request.POST.get("empresa")
+        mensaje = request.POST.get("mensaje")
+
+        mensaje_completo = f"""
+Nombre: {nombre}
+Correo: {correo}
+Teléfono: {telefono}
+Empresa: {empresa}
+
+Mensaje:
+{mensaje}
+"""
+
+        send_mail(
+            "Nuevo mensaje desde la web",
+            mensaje_completo,
+            settings.EMAIL_HOST_USER,
+            ['agilasali2003@gmail.com'],
+            fail_silently=False
+        )
+
+        return redirect('inicio')
+
+    return render(request, "inicio.html")
 
 def quienesomos(request):
     return render(request, 'quienesomos.html')
