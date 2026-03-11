@@ -13,6 +13,8 @@ def servicios(request):
 def contactanos(request):
     return render(request, 'contactanos.html')
 
+def aplicaciones(request):
+    return render(request, 'plantilla_admin.html')
 
 
 def error_404(request, url=None):

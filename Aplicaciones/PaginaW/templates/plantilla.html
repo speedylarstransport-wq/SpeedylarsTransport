@@ -1,6 +1,6 @@
 {% load static %}
 <!DOCTYPE html>
-<html lang="es">
+<html lang="en">
 
 <head>
     <meta charset="utf-8">
@@ -94,53 +94,12 @@
             <span class="navbar-toggler-icon"></span>
         </button>
         <div class="collapse navbar-collapse" id="navbarCollapse">
-
             <div class="navbar-nav ms-auto p-4 p-lg-0">
-
-                <!-- PÚBLICO -->
-                <a href="{% url 'inicio' %}" class="nav-item nav-link active">INICIO</a>
-                <a href="{% url 'quienesomos' %}" class="nav-item nav-link">QUIÉNES SOMOS</a>
-                <a href="{% url 'servicios' %}" class="nav-item nav-link">SERVICIOS</a>
-
-                <!-- USUARIOS 
-                <div class="nav-item dropdown">
-                    <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown">
-                        Usuarios
-                    </a>
-                    <div class="dropdown-menu">
-                        <a href="{% url 'registrar_usuario' %}" class="dropdown-item">Registrar</a>
-                        <a href="{% url 'lista_usuarios' %}" class="dropdown-item">Lista</a>
-                    </div>
-                </div>  -->
-
-                <!-- CONDUCTORES 
-                <div class="nav-item dropdown">
-                    <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown">
-                        Conductores
-                    </a>
-                    <div class="dropdown-menu">
-                        <a href="{% url 'nuevo_conductor' %}" class="dropdown-item">Nuevo</a>
-                        <a href="{% url 'listado_conductor' %}" class="dropdown-item">Lista</a>
-                    </div>
-                </div>   -->
-
-                <!-- SESIÓN 
-                <div class="nav-item dropdown">
-                    <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown">
-                        Sesión
-                    </a>
-                    <div class="dropdown-menu">
-                        <a href="{% url 'login' %}" class="dropdown-item">Iniciar sesión</a>
-                        <a href="{% url 'logout' %}" class="dropdown-item">Cerrar sesión</a>
-                    </div>
-                </div>   -->
-
-            </div>
-
-
+                <a href="{% url 'inicio' %}#inicio" class="nav-item nav-link">INICIO</a>
+                <a href="{% url 'inicio' %}#nosotros" class="nav-item nav-link">QUIENES SOMOS</a>
+                <a href="{% url 'inicio' %}#servicios" class="nav-item nav-link">SERVICIOS</a>
+                <a href="{% url 'inicio' %}#contacto" class="nav-item nav-link">CONTACTANOS</a>
                 
-                
-
                 <!--<div class="nav-item dropdown">
                     <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown">Pages</a>
                     <div class="dropdown-menu fade-up m-0">
@@ -150,7 +109,8 @@
                         <a href="404.html" class="dropdown-item">404 Page</a>
                     </div>
                 </div> -->
-                <a href="{% url 'contactanos' %}" class="nav-item nav-link">CONTACTANOS</a>
+                
+                <a href="{% url 'plantilla_admin' %}"  class="nav-item nav-link">APLICACIONES</a>
             </div>
              <!--<a href="" class="btn btn-primary py-4 px-lg-5 d-none d-lg-block">Get A Quote<i class="fa fa-arrow-right ms-3"></i></a> -->
         </div>
@@ -165,66 +125,64 @@
 
     
     <!-- Footer Start -->
-    <div class="container-fluid footer-custom text-light footer pt-5 mt-5 wow fadeIn" data-wow-delay="0.1s">
-        <div class="container py-5">
-            <div class="row g-5">
-                <div class="col-lg-3 col-md-6">
-                    <h4 class="text-light mb-4">Dirección</h4>
-                    <p class="mb-2"><i class="fa fa-map-marker-alt me-3"></i>Amaguaña, Calle Celso Washington, y, Quito 170152</p>
-                    <p class="mb-2"><i class="fa fa-phone-alt me-3"></i>+593 99 924 9084</p>
-                    <p class="mb-2"><i class="fa fa-envelope me-3"></i>speedylarstransport@gmail.com</p>
-                    <!--<div class="d-flex pt-2">
-                        <a class="btn btn-outline-light btn-social" href=""><i class="fab fa-twitter"></i></a>
-                        <a class="btn btn-outline-light btn-social" href=""><i class="fab fa-facebook-f"></i></a>
-                        <a class="btn btn-outline-light btn-social" href=""><i class="fab fa-youtube"></i></a>
-                        <a class="btn btn-outline-light btn-social" href=""><i class="fab fa-linkedin-in"></i></a>
-                    </div>-->
-                </div>
-                <div class="col-lg-3 col-md-6">
-                    
-                    <h4 class="text-light mb-4">Horarios de Atención</h4>
-                    <h6 class="text-light">Lunes - Sábado:</h6>
-                    <p class="mb-4">09.00 AM - 5.00 PM</p>
-                </div>
-                <div class="col-lg-3 col-md-6">
-                    <h4 class="text-light mb-4">Servicios</h4>
-                    <a class="btn btn-link" href="">Transporte Terrestre</a>
-                    <a class="btn btn-link" href="">Logística y Distribución</a>
-                    
-                </div>
-                <!--<div class="col-lg-3 col-md-6">
-                    <h4 class="text-light mb-4">Newsletter</h4>
-                    <p>Dolor amet sit justo amet elitr clita ipsum elitr est.</p>
-                    <div class="position-relative mx-auto" style="max-width: 400px;">
-                        <input class="form-control border-0 w-100 py-3 ps-4 pe-5" type="text" placeholder="Your email">
-                        <button type="button" class="btn btn-primary py-2 position-absolute top-0 end-0 mt-2 me-2">SignUp</button>
-                    </div>
-                </div> -->
-            </div>
-        </div>
-        <div class="container">
-            <div class="copyright">
-                <div class="row">
-                    <div class="col-md-6 text-center text-md-start mb-3 mb-md-0">
-                        &copy; <a class="border-bottom" href="#"> 2026 SPEEDYLARS TRANSPORT CIA LTDA</a>
+<div class="container-fluid footer-custom text-light footer pt-5 mt-5 wow fadeIn" data-wow-delay="0.1s">
+    <div class="container py-5">
+        <div class="row g-5">
 
-                        <!--/*** This template is free as long as you keep the footer author’s credit link/attribution link/backlink. If you'd like to use the template without the footer author’s credit link/attribution link/backlink, you can purchase the Credit Removal License from "https://htmlcodex.com/credit-removal". Thank you for your support. ***/-->
-                         <a class="border-bottom" href=""></a>
-                        
-                    </div>
-                    <!--<div class="col-md-6 text-center text-md-end">
-                        <div class="footer-menu">
-                            <a href="">Home</a>
-                            <a href="">Cookies</a>
-                            <a href="">Help</a>
-                            <a href="">FQAs</a>
-                        </div>
-                    </div>-->
+            <!-- Dirección -->
+            <div class="col-lg-3 col-md-6">
+                <h4 class="text-light mb-4">Dirección</h4>
+                <p class="mb-2"><i class="fa fa-map-marker-alt me-3"></i>Amaguaña, Calle Celso Washington, Quito 170152</p>
+                <p class="mb-2"><i class="fa fa-phone-alt me-3"></i>+593 99 924 9084</p>
+                <p class="mb-2"><i class="fa fa-envelope me-3"></i>speedylarstransport@gmail.com</p>
+            </div>
+
+            <!-- Horarios -->
+            <div class="col-lg-3 col-md-6">
+                <h4 class="text-light mb-4">Horarios de Atención</h4>
+                <h6 class="text-light">Lunes - Sábado:</h6>
+                <p class="mb-4">09.00 AM - 5.00 PM</p>
+            </div>
+
+            <!-- Servicios -->
+            <div class="col-lg-3 col-md-6">
+                <h4 class="text-light mb-4">Servicios</h4>
+                <a class="btn btn-link" href="">Transporte Terrestre</a>
+                <a class="btn btn-link" href="">Logística y Distribución</a>
+            </div>
+
+            <!-- Mapa de Ubicación -->
+            <div class="col-lg-3 col-md-6">
+                <h4 class="text-light mb-4">Ubicación</h4>
+                <div class="map-container" style="border-radius: 10px; overflow: hidden;">
+                    <iframe 
+                        src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3989.739350954713!2d-78.5029705!3d-0.3604883!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x91d5a3000b20f547%3A0x2489866bd2a2c417!2sSPEEDYLARS%20TRANSPORT%20CIA.%20LTDA.!5e0!3m2!1ses-419!2sec!4v1767586346902!5m2!1ses-419!2sec"
+                        width="100%" 
+                        height="250" 
+                        style="border:0;" 
+                        allowfullscreen="" 
+                        loading="lazy"
+                        referrerpolicy="no-referrer-when-downgrade">
+                    </iframe>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- Copyright -->
+    <div class="container">
+        <div class="copyright">
+            <div class="row">
+                <div class="col-md-6 text-center text-md-start mb-3 mb-md-0">
+                    &copy; <a class="border-bottom" href="#">2026 SPEEDYLARS TRANSPORT CIA LTDA</a>, All Rights Reserved.
+                   
                 </div>
             </div>
         </div>
     </div>
-    <!-- Footer End -->
+</div>
+<!-- Footer End -->
 
     <!-- Back to Top -->
     <a href="#" class="btn btn-lg btn-primary btn-lg-square back-to-top"><i class="bi bi-arrow-up"></i></a>
