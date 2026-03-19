@@ -25,7 +25,7 @@ Mensaje:
 """
 
         send_mail(
-            "Nuevo mensaje desde la web",
+            "Nuevo mensaje SpeedyLars-Contactanos",
             mensaje_completo,
             settings.EMAIL_HOST_USER,
             ['agilasali2003@gmail.com'],
