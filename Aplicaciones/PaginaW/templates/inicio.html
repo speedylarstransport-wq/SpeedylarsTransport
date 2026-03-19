@@ -441,7 +441,7 @@
         </div>
     </div>
     <!-- Service End -->
-
+        
 
         <!-- Booking Start -->
         <div id="contacto" class="container-fluid bg-secondary booking my-5 wow fadeInUp" data-wow-delay="0.1s">
@@ -457,24 +457,30 @@
                         <div class="bg-mi-color h-100 d-flex flex-column justify-content-center text-center p-5">
 
                             <h1 class="text-white mb-4">Contáctanos</h1>
-                            <form>
+                            
+                            <form method="POST" action="{% url 'contacto' %}"> 
+                                {% csrf_token %}
                                 <div class="row g-3">
                                     <div class="col-12 col-sm-6">
-                                        <input type="text" class="form-control border-0" placeholder="Nombre" style="height: 55px;">
+                                        <input type="text" name="nombre" class="form-control border-0" placeholder="Nombre" style="height: 55px;" required>
                                     </div>
+
                                     <div class="col-12 col-sm-6">
-                                        <input type="email" class="form-control border-0" placeholder="Correo" style="height: 55px;">
+                                        <input type="email" name="correo" class="form-control border-0" placeholder="Correo" style="height: 55px;" required>
                                     </div>
+
                                     <div class="col-12 col-sm-6">
-                                        <input type="email" class="form-control border-0" placeholder="Teléfono" style="height: 55px;">
+                                        <input type="tel" name="telefono" class="form-control border-0" placeholder="Teléfono" style="height: 55px;">
                                     </div>
+
                                     <div class="col-12 col-sm-6">
-                                        <input type="email" class="form-control border-0" placeholder="Empresa" style="height: 55px;">
+                                        <input type="text" name="empresa" class="form-control border-0" placeholder="Empresa" style="height: 55px;">
                                     </div>
                                     
                                     <div class="col-12">
-                                        <textarea class="form-control border-0" placeholder="Mensaje"></textarea>
+                                        <textarea name="mensaje" class="form-control border-0" placeholder="Mensaje"></textarea>
                                     </div>
+
                                     <div class="col-12">
                                         <button class="btn btn-secondary w-100 py-3" type="submit">Enviar</button>
                                     </div>
