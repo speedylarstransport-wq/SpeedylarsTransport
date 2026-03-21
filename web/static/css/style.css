@@ -516,3 +516,144 @@
 .back-to-top {
     background-color: #25D366 !important; 
 }
+
+
+/* Mensajes flotantes elegantes */
+.mensaje-flotante {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    z-index: 9999;
+    min-width: 320px;
+    max-width: 450px;
+    animation: slideInRight 0.5s ease-out;
+    box-shadow: 0 10px 40px rgba(0,0,0,0.1);
+    border-radius: 12px;
+    overflow: hidden;
+}
+
+@keyframes slideInRight {
+    from {
+        transform: translateX(100%);
+        opacity: 0;
+    }
+    to {
+        transform: translateX(0);
+        opacity: 1;
+    }
+}
+
+@keyframes slideOutRight {
+    from {
+        transform: translateX(0);
+        opacity: 1;
+    }
+    to {
+        transform: translateX(100%);
+        opacity: 0;
+    }
+}
+
+.mensaje-flotante.ocultar {
+    animation: slideOutRight 0.5s ease-out forwards;
+}
+
+.mensaje-contenido {
+    display: flex;
+    align-items: center;
+    padding: 16px 20px;
+    background: white;
+    gap: 15px;
+}
+
+.mensaje-exito .mensaje-contenido {
+    border-left: 4px solid #10b981;
+    background: linear-gradient(135deg, #ffffff 0%, #f0fdf4 100%);
+}
+
+.mensaje-error .mensaje-contenido {
+    border-left: 4px solid #ef4444;
+    background: linear-gradient(135deg, #ffffff 0%, #fef2f2 100%);
+}
+
+.mensaje-icono {
+    flex-shrink: 0;
+    width: 40px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    font-size: 24px;
+}
+
+.mensaje-exito .mensaje-icono {
+    background: #10b981;
+    color: white;
+}
+
+.mensaje-error .mensaje-icono {
+    background: #ef4444;
+    color: white;
+}
+
+.mensaje-texto {
+    flex: 1;
+}
+
+.mensaje-texto h4 {
+    font-size: 16px;
+    font-weight: 600;
+    color: #1f2937;
+    margin: 0;
+}
+
+.mensaje-texto p {
+    font-size: 14px;
+    color: #6b7280;
+    line-height: 1.4;
+    margin: 0;
+}
+
+.mensaje-cerrar {
+    flex-shrink: 0;
+    background: none;
+    border: none;
+    cursor: pointer;
+    color: #9ca3af;
+    font-size: 18px;
+    padding: 5px;
+    transition: color 0.3s ease;
+}
+
+.mensaje-cerrar:hover {
+    color: #374151;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .mensaje-flotante {
+        left: 20px;
+        right: 20px;
+        min-width: auto;
+        max-width: none;
+    }
+    
+    .mensaje-contenido {
+        padding: 12px 16px;
+    }
+    
+    .mensaje-icono {
+        width: 32px;
+        height: 32px;
+        font-size: 18px;
+    }
+    
+    .mensaje-texto h4 {
+        font-size: 14px;
+    }
+    
+    .mensaje-texto p {
+        font-size: 12px;
+    }
+}

@@ -1,6 +1,8 @@
 from django.shortcuts import render, redirect
 from django.conf import settings
+from django.http import JsonResponse  
 import requests
+from datetime import datetime
 
 
 def enviar_correo_brevo(nombre, correo, telefono, empresa, mensaje):
@@ -17,23 +19,115 @@ def enviar_correo_brevo(nombre, correo, telefono, empresa, mensaje):
         "content-type": "application/json"
     }
 
+  
+    fecha_actual = datetime.now().strftime("%d/%m/%Y %H:%M")
+    
+   
+    html_content = f"""
+    <!DOCTYPE html>
+    <html>
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Nuevo Mensaje - SpeedyLars</title>
+    </head>
+    <body style="margin: 0; padding: 0; font-family: 'Segoe UI', Arial, sans-serif; background-color: #f4f4f4;">
+        <div style="max-width: 600px; margin: 20px auto; background: white; border-radius: 12px; overflow: hidden; box-shadow: 0 4px 6px rgba(0,0,0,0.1);">
+            <!-- Header -->
+            <div style="background: linear-gradient(135deg, #0B2B40 0%, #1C4E6B 100%); padding: 30px; text-align: center;">
+                <h1 style="color: white; margin: 0; font-size: 28px;">SpeedyLars</h1>
+                <p style="color: #E0E0E0; margin: 10px 0 0; font-size: 14px;">Transporte & Logística</p>
+            </div>
+            
+            <!-- Content -->
+            <div style="padding: 30px;">
+                <div style="text-align: center; margin-bottom: 25px;">
+                    <div style="display: inline-block; background: #E8F5E9; padding: 10px 20px; border-radius: 50px;">
+                        <span style="color: #2E7D32; font-weight: bold;">📬 Nuevo Mensaje de Contacto</span>
+                    </div>
+                </div>
+                
+                <div style="background: #F8F9FA; border-radius: 8px; padding: 20px; margin-bottom: 25px;">
+                    <h2 style="color: #0B2B40; margin: 0 0 10px; font-size: 20px;">Información del Cliente</h2>
+                    <p style="color: #666; margin: 0; font-size: 13px;">Recibido: {fecha_actual}</p>
+                </div>
+                
+                <!-- Datos del cliente -->
+                <table style="width: 100%; border-collapse: collapse; margin-bottom: 25px;">
+                    <tr style="border-bottom: 1px solid #E0E0E0;">
+                        <td style="padding: 12px 0;">
+                            <strong style="color: #0B2B40;">👤 Nombre:</strong>
+                        </td>
+                        <td style="padding: 12px 0; text-align: right;">
+                            {nombre}
+                        </td>
+                    </tr>
+                    <tr style="border-bottom: 1px solid #E0E0E0;">
+                        <td style="padding: 12px 0;">
+                            <strong style="color: #0B2B40;">📧 Correo Electrónico:</strong>
+                        </td>
+                        <td style="padding: 12px 0; text-align: right;">
+                            <a href="mailto:{correo}" style="color: #1C4E6B; text-decoration: none;">{correo}</a>
+                        </td>
+                    </tr>
+                    {f'<tr style="border-bottom: 1px solid #E0E0E0;"><td style="padding: 12px 0;"><strong style="color: #0B2B40;">📱 Teléfono:</strong></td><td style="padding: 12px 0; text-align: right;">{telefono}</td></tr>' if telefono else ''}
+                    {f'<tr style="border-bottom: 1px solid #E0E0E0;"><td style="padding: 12px 0;"><strong style="color: #0B2B40;">🏢 Empresa:</strong></td><td style="padding: 12px 0; text-align: right;">{empresa}</td></tr>' if empresa else ''}
+                </table>
+                
+                <!-- Mensaje del cliente -->
+                <div style="background: #F8F9FA; border-radius: 8px; padding: 20px; margin-bottom: 25px;">
+                    <h3 style="color: #0B2B40; margin: 0 0 15px; font-size: 18px;"> Mensaje:</h3>
+                    <div style="background: white; padding: 15px; border-radius: 8px; border-left: 4px solid #1C4E6B;">
+                        <p style="margin: 0; color: #333; line-height: 1.6; font-style: italic;">
+                            "{mensaje}"
+                        </p>
+                    </div>
+                </div>
+                
+                <!-- Acciones rápidas -->
+                <div style="background: #E3F2FD; border-radius: 8px; padding: 20px; text-align: center;">
+                    <h4 style="color: #0B2B40; margin: 0 0 15px;">Acciones Rápidas</h4>
+                    <div style="display: flex; justify-content: center; gap: 15px;">
+                        <a href="mailto:{correo}?subject=Respuesta a tu consulta - SpeedyLars" 
+                           style="display: inline-block; background: #1C4E6B; color: white; padding: 10px 20px; text-decoration: none; border-radius: 6px; font-size: 14px;">
+                            📧 Responder
+                        </a>
+                        <a href="tel:{telefono}" 
+                           style="display: inline-block; background: #2E7D32; color: white; padding: 10px 20px; text-decoration: none; border-radius: 6px; font-size: 14px;">
+                            📞 Llamar
+                        </a>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Footer -->
+            <div style="background: #F8F9FA; padding: 20px; text-align: center; border-top: 1px solid #E0E0E0;">
+                <p style="margin: 0 0 10px; color: #666; font-size: 12px;">
+                    <strong>SpeedyLars</strong> - Transporte Seguro y Confiable
+                </p>
+                <p style="margin: 0; color: #999; font-size: 11px;">
+                    Este mensaje fue enviado a través del formulario de contacto de la página web.
+                </p>
+            </div>
+        </div>
+    </body>
+    </html>
+    """
+
     data = {
         "sender": {
             "name": "SpeedyLars",
-            "email": "maria.agila9374@utc.edu.ec"  # ✅ remitente verificado en Brevo
+            "email": "maria.agila9374@utc.edu.ec"
         },
         "to": [
-            {"email": "agilasali2003@gmail.com"}  # ✅ correo destino
+            {"email": "agilasali2003@gmail.com"}
         ],
-        "subject": "Nuevo mensaje SpeedyLars - Contacto",
-        "htmlContent": f"""
-            <h2>Nuevo mensaje desde SpeedyLars</h2>
-            <p><b>Nombre:</b> {nombre}</p>
-            <p><b>Correo:</b> {correo}</p>
-            <p><b>Teléfono:</b> {telefono}</p>
-            <p><b>Empresa:</b> {empresa}</p>
-            <p><b>Mensaje:</b><br>{mensaje}</p>
-        """
+        "subject": f" Nuevo mensaje de {nombre} - SpeedyLars",
+        "htmlContent": html_content,
+        "replyTo": {
+            "email": correo,
+            "name": nombre
+        }
     }
 
     try:
@@ -53,7 +147,6 @@ def enviar_correo_brevo(nombre, correo, telefono, empresa, mensaje):
 
 
 def inicio(request):
-
     if request.method == "POST":
         nombre = request.POST.get("nombre")
         correo = request.POST.get("correo")
@@ -63,12 +156,17 @@ def inicio(request):
 
         enviado = enviar_correo_brevo(nombre, correo, telefono, empresa, mensaje)
 
-        if enviado:
-            print("Formulario enviado correctamente")
+        # Verifica si es una petición AJAX
+        is_ajax = request.headers.get('X-Requested-With') == 'XMLHttpRequest'
+        
+        if is_ajax:
+            return JsonResponse({'success': enviado})
         else:
-            print("Falló el envío")
-
-        return redirect('inicio')
+            if enviado:
+                print("Formulario enviado correctamente")
+            else:
+                print("Falló el envío")
+            return redirect('inicio')
 
     return render(request, "inicio.html")
 
