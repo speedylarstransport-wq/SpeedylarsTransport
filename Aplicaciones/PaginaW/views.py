@@ -1,9 +1,39 @@
-from django.shortcuts import render
-
-
-from django.core.mail import send_mail
 from django.shortcuts import render, redirect
 from django.conf import settings
+import requests
+
+
+def enviar_correo_brevo(nombre, correo, telefono, empresa, mensaje):
+    url = "https://api.brevo.com/v3/smtp/email"
+
+    headers = {
+        "accept": "application/json",
+        "api-key": settings.BREVO_API_KEY,
+        "content-type": "application/json"
+    }
+
+    data = {
+        "sender": {
+            "name": "SpeedyLars",
+            "email": "maria.agila9374@utc.edu.ec"  # ✅ correo verificado
+        },
+        "to": [
+            {"email": "agilasali2003@gmail.com"}  # ✅ a dónde llega
+        ],
+        "subject": "Nuevo mensaje SpeedyLars - Contacto",
+        "htmlContent": f"""
+            <h2>Nuevo mensaje desde Speedylars</h2>
+            <p><b>Nombre:</b> {nombre}</p>
+            <p><b>Correo:</b> {correo}</p>
+            <p><b>Teléfono:</b> {telefono}</p>
+            <p><b>Empresa:</b> {empresa}</p>
+            <p><b>Mensaje:</b><br>{mensaje}</p>
+        """
+    }
+
+    response = requests.post(url, json=data, headers=headers)
+    print(response.status_code, response.text)
+
 
 def inicio(request):
 
@@ -14,23 +44,7 @@ def inicio(request):
         empresa = request.POST.get("empresa")
         mensaje = request.POST.get("mensaje")
 
-        mensaje_completo = f"""
-Nombre: {nombre}
-Correo: {correo}
-Teléfono: {telefono}
-Empresa: {empresa}
-
-Mensaje:
-{mensaje}
-"""
-
-        send_mail(
-            "Nuevo mensaje SpeedyLars-Contactanos",
-            mensaje_completo,
-            settings.EMAIL_HOST_USER,
-            ['agilasali2003@gmail.com'],
-            fail_silently=False
-        )
+        enviar_correo_brevo(nombre, correo, telefono, empresa, mensaje)
 
         return redirect('inicio')
 

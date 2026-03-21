@@ -12,6 +12,8 @@ https://docs.djangoproject.com/en/5.1/ref/settings/
 
 from pathlib import Path
 import os
+from dotenv import load_dotenv
+load_dotenv()
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -129,20 +131,7 @@ USE_TZ = True
 #EMAIL_USE_TLS = False
 #EMAIL_USE_SSL = True
 #EMAIL_HOST_USER = 'speedylarstransport@gmail.com'  
-#EMAIL_HOST_PASSWORD = 'jkka ktgn uqmx iggp'  
-
-
-
-
-EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
-
-EMAIL_HOST = 'mail.privateemail.com'
-EMAIL_PORT = 587
-EMAIL_USE_TLS = True
-EMAIL_USE_SSL = False
-
-EMAIL_HOST_USER = 'logistica@speedylars.com'
-EMAIL_HOST_PASSWORD = 'Logistic@2025'
+#EMAIL_HOST_PASSWORD = 'jkka ktgn uqmx iggp'
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/5.1/howto/static-files/
@@ -165,6 +154,8 @@ STORAGES = {
 
 CSRF_TRUSTED_ORIGINS = ['https://web-production-38718.up.railway.app','https://speedylars.com','https://www.speedylars.com']
 SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
+# CONFIGURACIÓN BREVO
+BREVO_API_KEY = os.environ.get('BREVO_API_KEY')
 #LOGIN_URL = 'login'
 #LOGIN_REDIRECT_URL = 'inicio'
 
