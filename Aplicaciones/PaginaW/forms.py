@@ -211,7 +211,7 @@ class UsuarioForm(UserCreationForm):
         if user.rol == 'superadmin':
             user.is_staff = True
             user.is_superuser = True
-        elif user.rol == 'admin':
+        elif user.rol == 'admin': 
             user.is_staff = True
             user.is_superuser = False
         else:  # conductor
