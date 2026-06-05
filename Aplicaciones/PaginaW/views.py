@@ -3,6 +3,18 @@ from django.conf import settings
 from django.http import JsonResponse  
 import requests
 from datetime import datetime
+from django.shortcuts import render, redirect, get_object_or_404
+from django.contrib.auth.decorators import login_required
+from django.contrib import messages
+from django.urls import reverse
+
+from django.core.validators import validate_email
+from django.core.exceptions import ValidationError
+import re
+
+from .models import Usuario, Conductor
+from .forms import UsuarioForm, ConductorForm
+from .decorators import rol_requerido
 
 
 def enviar_correo_brevo(nombre, correo, telefono, empresa, mensaje):
@@ -230,27 +242,12 @@ def logout_view(request):
     logout(request)
     messages.success(request, 'Sesión cerrada correctamente.')
     return redirect('login')
-
-
-from django.shortcuts import render, redirect, get_object_or_404
-from django.contrib.auth.decorators import login_required
-from django.contrib import messages
-from django.urls import reverse
-
-from django.core.validators import validate_email
-from django.core.exceptions import ValidationError
-import re
-
-from .models import Usuario, Conductor
-from .forms import UsuarioForm, ConductorForm
-
-
-
 # =====================================================
 # REGISTRAR USUARIO
 # =====================================================
-#@login_required
-#@rol_requerido(['admin', 'superadmin'])
+
+@login_required
+@rol_requerido(['admin', 'superadmin'])
 def registrar_usuario(request):
     if request.method == 'POST':
         form = UsuarioForm(request.POST)

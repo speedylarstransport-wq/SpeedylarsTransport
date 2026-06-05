@@ -1,4 +1,9 @@
+{% extends "./plantilla.html" %}
 {% load static %}
+{% block contenido %}
+
+<br>
+
 <!DOCTYPE html>
 <html lang="es" data-bs-theme="light">
 
@@ -24,163 +29,42 @@
       --accent-orange: #F57C00;
       --accent-yellow: #FFA726;
       --light-bg: #f8fafc;
-      --card-shadow: 0 20px 60px rgba(11, 44, 93, 0.15);
+      --card-shadow: 0 10px 30px rgba(11, 44, 93, 0.12);
     }
 
-    body {
+    /* Contenedor simplificado - sin fondos decorativos que expandan */
+    .login-wrapper {
       font-family: 'Poppins', sans-serif;
-      background: var(--light-bg);
-      min-height: 100vh;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      position: relative;
-      overflow-x: hidden;
+      max-width: 500px;
+      margin: 0 auto;
     }
 
-    /* Fondo decorativo */
-    .bg-decoration {
-      position: fixed;
-      width: 100%;
-      height: 100%;
-      z-index: -1;
-    }
-
-    .bg-circle-1 {
-      position: absolute;
-      width: 500px;
-      height: 500px;
-      border-radius: 50%;
-      background: linear-gradient(135deg, rgba(31, 79, 163, 0.08), transparent);
-      top: -200px;
-      right: -150px;
-    }
-
-    .bg-circle-2 {
-      position: absolute;
-      width: 400px;
-      height: 400px;
-      border-radius: 50%;
-      background: linear-gradient(135deg, rgba(245, 124, 0, 0.05), transparent);
-      bottom: -150px;
-      left: -100px;
-    }
-
-    /* Card principal */
-    .login-container {
-      max-width: 1100px;
-      width: 100%;
-      margin: 20px;
-    }
-
+    /* Card compacta */
     .login-card {
-      border-radius: 28px;
+      border-radius: 20px;
       border: none;
-      overflow: hidden;
+      background: white;
       box-shadow: var(--card-shadow);
-      backdrop-filter: blur(10px);
-      background: rgba(255, 255, 255, 0.95);
-    }
-
-    /* Panel izquierdo */
-    .brand-panel {
-      background: linear-gradient(145deg, var(--primary-dark), var(--primary-blue));
-      color: white;
-      padding: 3rem 2.5rem;
-      position: relative;
       overflow: hidden;
     }
 
-    .brand-panel::before {
-      content: '';
-      position: absolute;
-      width: 300px;
-      height: 300px;
-      background: rgba(255, 255, 255, 0.05);
-      border-radius: 50%;
-      top: -100px;
-      right: -100px;
-    }
-
-    .brand-panel::after {
-      content: '';
-      position: absolute;
-      width: 200px;
-      height: 200px;
-      background: rgba(255, 167, 38, 0.08);
-      border-radius: 50%;
-      bottom: -80px;
-      left: -80px;
-    }
-
-    .brand-title {
-      font-weight: 600;
-      letter-spacing: 3px;
-      font-size: 0.75rem;
-      opacity: 0.9;
-      text-transform: uppercase;
-      margin-bottom: 1rem;
-    }
-
-    .logo-container {
-      margin: 2rem 0;
-      position: relative;
-      z-index: 2;
-    }
-
-    .logo-img {
-      width: 180px;
-      filter: drop-shadow(0 5px 15px rgba(0, 0, 0, 0.2));
-    }
-
-    .brand-slogan {
-      font-size: 0.9rem;
-      opacity: 0.9;
-      line-height: 1.6;
-      position: relative;
-      z-index: 2;
-      margin-top: 2rem;
-    }
-
-    .feature-list {
-      margin-top: 2.5rem;
-      position: relative;
-      z-index: 2;
-    }
-
-    .feature-item {
-      display: flex;
-      align-items: center;
-      margin-bottom: 1rem;
-      font-size: 0.85rem;
-    }
-
-    .feature-icon {
-      width: 24px;
-      height: 24px;
-      background: rgba(255, 255, 255, 0.15);
-      border-radius: 50%;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      margin-right: 10px;
-      font-size: 0.7rem;
-    }
-
-    /* Panel de formulario */
-    .form-panel {
-      padding: 3rem 3rem;
-    }
-
+    /* Header simplificado sin panel lateral */
     .login-header {
-      margin-bottom: 2rem;
+      padding: 1.8rem 2rem 1rem 2rem;
+      text-align: center;
+      background: white;
+    }
+
+    .logo-mini {
+      width: 65px;
+      margin-bottom: 1rem;
     }
 
     .login-title {
       font-weight: 700;
       color: var(--primary-dark);
-      font-size: 2rem;
-      margin-bottom: 0.5rem;
+      font-size: 1.6rem;
+      margin-bottom: 0.3rem;
     }
 
     .title-accent {
@@ -189,65 +73,69 @@
 
     .login-subtitle {
       color: #6c757d;
-      font-size: 0.95rem;
+      font-size: 0.85rem;
+      margin-bottom: 0;
+    }
+
+    /* Cuerpo del formulario */
+    .login-body {
+      padding: 0 2rem 1.8rem 2rem;
     }
 
     .accent-line {
-      height: 4px;
-      width: 60px;
+      height: 3px;
+      width: 50px;
       background: linear-gradient(to right, var(--accent-orange), var(--accent-yellow));
       border-radius: 2px;
-      margin: 1.5rem 0 2rem 0;
+      margin: 0.8rem auto 1.5rem auto;
     }
 
-    /* Campos de formulario - CORREGIDO */
+    /* Campos de formulario compactos */
     .form-floating {
-      margin-bottom: 1.5rem;
+      margin-bottom: 1rem;
     }
 
     .form-floating > .form-control {
-      height: calc(3.5rem + 2px);
-      padding: 1rem 1rem;
-      border-radius: 14px;
+      height: calc(3rem + 2px);
+      padding: 0.8rem 0.8rem;
+      border-radius: 12px;
       border: 1.5px solid #e2e8f0;
       background-color: #f8fafc;
+      font-size: 0.9rem;
     }
 
     .form-floating > label {
-      padding: 1rem 1rem;
+      padding: 0.8rem 0.8rem;
       color: #64748b;
       font-weight: 500;
+      font-size: 0.85rem;
     }
 
     .form-floating > .form-control:focus {
       border-color: var(--primary-blue);
-      box-shadow: 0 0 0 0.25rem rgba(31, 79, 163, 0.15);
+      box-shadow: 0 0 0 0.2rem rgba(31, 79, 163, 0.1);
       background-color: white;
     }
 
-    .form-floating > .form-control:focus ~ label {
-      color: var(--primary-blue);
-    }
-
-    /* Contenedor especial para campo de contraseña */
+    /* Campo de contraseña compacto */
     .password-container {
       position: relative;
-      margin-bottom: 1.5rem;
+      margin-bottom: 1rem;
     }
 
     .password-container .form-control {
-      height: calc(3.5rem + 2px);
-      padding: 1rem 1rem;
-      border-radius: 14px;
+      height: calc(3rem + 2px);
+      padding: 0.8rem 2.2rem 0.8rem 0.8rem;
+      border-radius: 12px;
       border: 1.5px solid #e2e8f0;
       background-color: #f8fafc;
       width: 100%;
-      font-size: 1rem;
+      font-size: 0.9rem;
     }
 
     .password-container .form-control:focus {
       border-color: var(--primary-blue);
-      box-shadow: 0 0 0 0.25rem rgba(31, 79, 163, 0.15);
+      box-shadow: 0 0 0 0.2rem rgba(31, 79, 163, 0.1);
       background-color: white;
       outline: none;
     }
@@ -256,17 +144,18 @@
       position: absolute;
       top: 0;
       left: 0;
-      padding: 1rem 1rem;
+      padding: 0.8rem 0.8rem;
       color: #64748b;
       font-weight: 500;
       pointer-events: none;
       transition: all 0.2s;
       transform-origin: 0 0;
+      font-size: 0.85rem;
     }
 
     .password-container .form-control:focus ~ .password-label,
     .password-container .form-control:not(:placeholder-shown) ~ .password-label {
-      transform: translateY(-0.5rem) scale(0.85);
+      transform: translateY(-0.45rem) scale(0.85);
       color: var(--primary-blue);
     }
 
@@ -274,33 +163,29 @@
       position: absolute;
       right: 0;
       top: 0;
-      height: calc(3.5rem + 2px);
-      width: 3.5rem;
-      background-color: #f8fafc;
-      border: 1.5px solid #e2e8f0;
-      border-left: none;
-      border-radius: 0 14px 14px 0;
+      height: calc(3rem + 2px);
+      width: 2.8rem;
+      background: transparent;
+      border: none;
       cursor: pointer;
-      color: #64748b;
-      transition: all 0.3s;
+      color: #94a3b8;
+      transition: all 0.2s;
       display: flex;
       align-items: center;
       justify-content: center;
+      font-size: 0.9rem;
     }
 
     .toggle-password:hover {
-      background-color: var(--primary-blue);
-      color: white;
+      color: var(--primary-blue);
     }
 
     .forgot-link {
       color: var(--primary-blue);
-      font-size: 0.85rem;
+      font-size: 0.75rem;
       font-weight: 500;
       text-decoration: none;
-      display: inline-flex;
-      align-items: center;
-      transition: all 0.3s;
+      transition: all 0.2s;
     }
 
     .forgot-link:hover {
@@ -309,167 +194,121 @@
     }
 
     .forgot-link i {
-      margin-right: 5px;
-      font-size: 0.8rem;
+      margin-right: 4px;
+      font-size: 0.7rem;
     }
 
-    /* Botón de login */
+    /* Botón de login compacto */
     .login-btn {
       background: linear-gradient(135deg, var(--accent-orange), var(--accent-yellow));
       color: white;
       font-weight: 600;
       border: none;
-      border-radius: 14px;
-      padding: 1rem;
+      border-radius: 12px;
+      padding: 0.7rem;
       width: 100%;
-      margin-top: 1.5rem;
-      transition: all 0.3s;
-      letter-spacing: 0.5px;
-      box-shadow: 0 10px 20px rgba(245, 124, 0, 0.2);
+      margin-top: 1.2rem;
+      transition: all 0.2s;
+      font-size: 0.9rem;
+      box-shadow: 0 4px 12px rgba(245, 124, 0, 0.2);
     }
 
     .login-btn:hover {
-      transform: translateY(-3px);
-      box-shadow: 0 15px 30px rgba(245, 124, 0, 0.3);
+      transform: translateY(-2px);
+      box-shadow: 0 8px 20px rgba(245, 124, 0, 0.25);
       color: white;
     }
 
-    .login-btn:active {
-      transform: translateY(-1px);
-    }
-
-    /* Footer del formulario */
+    /* Footer compacto */
     .form-footer {
-      margin-top: 2rem;
+      margin-top: 1.2rem;
       text-align: center;
-      font-size: 0.8rem;
-      color: #64748b;
-      padding-top: 1.5rem;
-      border-top: 1px solid #e2e8f0;
+      font-size: 0.7rem;
+      color: #94a3b8;
+      padding-top: 1rem;
+      border-top: 1px solid #eef2f6;
     }
 
-    .copyright {
-      font-size: 0.75rem;
-      color: #94a3b8;
+    /* Alerta flotante */
+    .alert-toast {
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      z-index: 9999;
+      min-width: 260px;
+      max-width: 350px;
+      font-size: 0.85rem;
+      box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+      border-radius: 12px;
     }
 
     /* Responsive */
-    @media (max-width: 992px) {
-      .login-card {
-        margin: 1rem;
-      }
-      
-      .brand-panel, .form-panel {
-        padding: 2.5rem 2rem;
-      }
-    }
-
-    @media (max-width: 768px) {
-      .brand-panel {
-        padding: 2rem 1.5rem;
-      }
-      
-      .form-panel {
-        padding: 2rem 1.5rem;
+    @media (max-width: 560px) {
+      .login-header, .login-body {
+        padding-left: 1.5rem;
+        padding-right: 1.5rem;
       }
       
       .login-title {
-        font-size: 1.75rem;
+        font-size: 1.4rem;
       }
-    }
-
-    /* Animaciones */
-    @keyframes fadeIn {
-      from { opacity: 0; transform: translateY(20px); }
-      to { opacity: 1; transform: translateY(0); }
-    }
-
-    .login-card {
-      animation: fadeIn 0.8s ease-out;
-    }
-
-    .logo-img {
-      animation: fadeIn 1s ease-out 0.3s both;
     }
   </style>
 </head>
 
-<body>
-  <!-- Fondo decorativo -->
-  <div class="bg-decoration">
-    <div class="bg-circle-1"></div>
-    <div class="bg-circle-2"></div>
-  </div>
-
-  <div class="login-container">
+<body style="background: transparent; min-height: auto; display: block; padding: 20px;">
+  <!-- Wrapper compacto sin decoraciones de fondo -->
+  <div class="login-wrapper">
     <div class="card login-card">
-      <div class="row g-0">
-        
-        <!-- Panel de marca -->
-        <div class="col-lg-5 brand-panel d-flex flex-column justify-content-center">
-          <div>
-            <h6 class="brand-title">SpeedyLars Transport</h6>
-            <div class="logo-container">
-              <img src="{% static 'img/logo.jpeg' %}" alt="SpeedyLars" class="logo-img">
-            </div>
-            <p class="brand-slogan">
-              Soluciones logísticas de alto rendimiento para transporte pesado y trailers, 
-              garantizando eficiencia, seguridad y puntualidad en cada entrega.
-            </p>
-          </div>
-        </div>
-
-        <!-- Panel de formulario -->
-        <div class="col-lg-7 form-panel d-flex flex-column justify-content-center">
-          <div class="login-header">
-            <h1 class="login-title">Bienvenido a <span class="title-accent">SpeedyLars</span></h1>
-            <p class="login-subtitle">
-              Inicie sesión para acceder al sistema de gestión logística
-            </p>
-            <div class="accent-line"></div>
-          </div>
-
-          <form method="POST" action="{% url 'login' %}" id="loginForm">
-            {% csrf_token %}
-            
-            <!-- Campo de usuario -->
-            <div class="form-floating">
-              <input type="text" class="form-control" id="username" name="username" placeholder="Usuario" required>
-              <label for="username">
-                <i class="fas fa-user me-2"></i>Usuario
-              </label>
-            </div>
-
-            <!-- Campo de contraseña - CORREGIDO -->
-            <div class="password-container">
-              <input type="password" class="form-control" id="password" name="password" placeholder=" " required>
-              <label class="password-label" for="password">
-                <i class="fas fa-lock me-2"></i>Contraseña
-              </label>
-              <button type="button" class="toggle-password" id="togglePassword">
-                <i class="fas fa-eye" id="eyeIcon"></i>
-              </button>
-            </div>
-
-            <div class="d-flex justify-content-between align-items-center mt-2">
-
-              <a href="{% url 'recuperar_contrasena' %}" class="forgot-link">
-                <i class="fas fa-key"></i> ¿Olvidó su contraseña?
-              </a>
-            </div>
-
-            <button type="submit" class="login-btn">
-              <i class="fas fa-sign-in-alt me-2"></i> Ingresar al Sistema
-            </button>
-          </form>
-
-          <div class="form-footer">
-            
-            <p class="copyright mt-3">© SpeedyLars Transport</p>
-          </div>
-        </div>
-
+      
+      <!-- Header con logo y título -->
+      <div class="login-header">
+        <img src="{% static 'img/logo.jpeg' %}" alt="SpeedyLars" class="logo-mini">
+        <h1 class="login-title">Speedy<span class="title-accent">Lars</span></h1>
+        <p class="login-subtitle">Accede al sistema de gestión logística</p>
+        <div class="accent-line"></div>
       </div>
+
+      <!-- Formulario -->
+      <div class="login-body">
+        <form method="POST" action="{% url 'login' %}" id="loginForm">
+          {% csrf_token %}
+          
+          <!-- Campo de usuario -->
+          <div class="form-floating">
+            <input type="text" class="form-control" id="username" name="username" placeholder="Usuario" required>
+            <label for="username">
+              <i class="fas fa-user me-1"></i>Usuario
+            </label>
+          </div>
+
+          <!-- Campo de contraseña -->
+          <div class="password-container">
+            <input type="password" class="form-control" id="password" name="password" placeholder=" " required>
+            <label class="password-label" for="password">
+              <i class="fas fa-lock me-1"></i>Contraseña
+            </label>
+            <button type="button" class="toggle-password" id="togglePassword">
+              <i class="fas fa-eye" id="eyeIcon"></i>
+            </button>
+          </div>
+
+          <div class="d-flex justify-content-end mt-1">
+            <a href="{% url 'recuperar_contrasena' %}" class="forgot-link">
+              <i class="fas fa-key"></i> ¿Olvidó su contraseña?
+            </a>
+          </div>
+
+          <button type="submit" class="login-btn">
+            <i class="fas fa-sign-in-alt me-2"></i> Ingresar
+          </button>
+        </form>
+
+        <div class="form-footer">
+          <p class="mb-0">© SpeedyLars Transport</p>
+        </div>
+      </div>
+
     </div>
   </div>
 
@@ -486,7 +325,6 @@
       const type = password.getAttribute('type') === 'password' ? 'text' : 'password';
       password.setAttribute('type', type);
       
-      // Toggle eye icon
       if (type === 'password') {
         icon.classList.remove('fa-eye-slash');
         icon.classList.add('fa-eye');
@@ -496,7 +334,7 @@
       }
     });
 
-    // Form validation and submission
+    // Form validation
     document.getElementById('loginForm').addEventListener('submit', function(e) {
       const username = document.getElementById('username').value.trim();
       const password = document.getElementById('password').value.trim();
@@ -507,39 +345,27 @@
         return;
       }
       
-      // Add loading state to button
       const submitBtn = this.querySelector('.login-btn');
       const originalText = submitBtn.innerHTML;
       submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i> Verificando...';
       submitBtn.disabled = true;
       
-      // Re-enable after 3 seconds if submission fails
       setTimeout(() => {
         submitBtn.innerHTML = originalText;
         submitBtn.disabled = false;
       }, 3000);
     });
 
-    // Function to show alert (replaces SweetAlert for simplicity)
     function showAlert(type, message) {
-      // Create alert element
       const alertDiv = document.createElement('div');
-      alertDiv.className = `alert alert-${type === 'error' ? 'danger' : 'success'} alert-dismissible fade show`;
-      alertDiv.style.position = 'fixed';
-      alertDiv.style.top = '20px';
-      alertDiv.style.right = '20px';
-      alertDiv.style.zIndex = '9999';
-      alertDiv.style.minWidth = '300px';
-      alertDiv.style.boxShadow = '0 5px 15px rgba(0,0,0,0.1)';
+      alertDiv.className = `alert alert-${type === 'error' ? 'danger' : 'success'} alert-dismissible fade show alert-toast`;
       alertDiv.innerHTML = `
         <strong>${type === 'error' ? 'Error' : 'Éxito'}</strong> ${message}
         <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
       `;
       
-      // Add to page
       document.body.appendChild(alertDiv);
       
-      // Auto remove after 5 seconds
       setTimeout(() => {
         if (alertDiv.parentNode) {
           alertDiv.parentNode.removeChild(alertDiv);
@@ -547,10 +373,8 @@
       }, 5000);
     }
 
-    // Check for messages from Django - MODIFICADO
     {% if messages %}
       {% for message in messages %}
-        // Filtramos solo los mensajes que queremos mostrar en login
         {% if message.tags == 'error' or 'credenciales' in message|lower or 'incorrecto' in message|lower or 'inválido' in message|lower %}
         showAlert('{{ message.tags }}', '{{ message|escapejs }}');
         {% endif %}
@@ -559,3 +383,5 @@
   </script>
 </body>
 </html>
+
+    {% endblock %}

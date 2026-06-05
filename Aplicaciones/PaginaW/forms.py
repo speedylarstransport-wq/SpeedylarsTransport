@@ -46,7 +46,7 @@ class UsuarioForm(UserCreationForm):
         label="Correo Electrónico",
         widget=forms.EmailInput(attrs={
             'class': 'form-control',
-            'placeholder': 'ejemplo@correo.com'
+            'placeholder': 'speedylars@correo.com'
         })
     )
     

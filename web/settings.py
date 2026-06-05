@@ -11,7 +11,9 @@ https://docs.djangoproject.com/en/5.1/ref/settings/
 """
 
 from pathlib import Path
+import dj_database_url
 import os
+
 from dotenv import load_dotenv
 load_dotenv()
 
@@ -80,19 +82,11 @@ WSGI_APPLICATION = 'web.wsgi.application'
 # https://docs.djangoproject.com/en/5.1/ref/settings/#databases
 
 DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'transpeedy_bdd',
-        'USER': 'postgres',  
-        'PASSWORD': 'Maria2003agil',  
-        'HOST': 'localhost',  
-        'PORT': '5432', 
-        'OPTIONS': {
-            'options': '-c search_path=gestion,public'
-        }
-    }
+    'default': dj_database_url.config(default=os.getenv('DATABASE_URL'))
 
 }
+
+
 
 AUTH_USER_MODEL = 'PaginaW.Usuario'
 # Password validation
