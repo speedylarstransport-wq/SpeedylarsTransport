@@ -3,114 +3,348 @@
 {% load static %}
 {% block contenido %}
 
+<style>
+    :root {
+        --color-primario: #2c3e50;
+        --color-secundario: #3498db;
+        --color-exito: #27ae60;
+        --color-peligro: #e74c3c;
+        --color-advertencia: #f39c12;
+        --color-fondo: #f8f9fa;
+        --color-borde: #e0e0e0;
+        --sombra-suave: 0 2px 10px rgba(0, 0, 0, 0.08);
+        --sombra-fuerte: 0 4px 20px rgba(0, 0, 0, 0.1);
+    }
+
+    .content {
+        padding: 20px;
+        background-color: #f5f7fa;
+        min-height: calc(100vh - 60px);
+    }
+
+    .card {
+        border-radius: 12px;
+        box-shadow: var(--sombra-suave);
+        border: none;
+        overflow: hidden;
+    }
+
+    .card-header {
+        background: linear-gradient(135deg, var(--color-primario) 0%, #1a4a6e 100%);
+        color: white;
+        padding: 20px 25px;
+        border-bottom: none;
+    }
+
+    .card-header h3 {
+        margin: 0;
+        font-size: 1.5rem;
+        font-weight: 600;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+    }
+
+    .card-header .btn {
+        background: rgba(255,255,255,0.2);
+        border: 1px solid rgba(255,255,255,0.3);
+        transition: all 0.3s ease;
+    }
+
+    .card-header .btn:hover {
+        background: rgba(255,255,255,0.3);
+        transform: translateY(-2px);
+    }
+
+    .table-wrapper {
+        padding: 20px;
+    }
+
+    .table {
+        margin-bottom: 0;
+    }
+
+    .table thead th {
+        background-color: var(--color-fondo);
+        color: var(--color-primario);
+        font-weight: 600;
+        text-transform: uppercase;
+        font-size: 0.75rem;
+        letter-spacing: 0.5px;
+        padding: 15px 12px;
+        border-bottom: 2px solid var(--color-borde);
+    }
+
+    .table tbody td {
+        padding: 12px;
+        vertical-align: middle;
+        border-color: var(--color-borde);
+    }
+
+    .table tbody tr {
+        transition: all 0.2s ease;
+    }
+
+    .table tbody tr:hover {
+        background-color: rgba(52, 152, 219, 0.05);
+        transform: scale(1.01);
+        box-shadow: var(--sombra-suave);
+    }
+
+    .badge {
+        padding: 6px 12px;
+        font-weight: 500;
+        font-size: 0.75rem;
+    }
+
+    .bg-soft-primary {
+        background-color: rgba(52, 152, 219, 0.12);
+        color: #2980b9;
+    }
+
+    .bg-soft-success {
+        background-color: rgba(39, 174, 96, 0.12);
+        color: #229954;
+    }
+
+    .bg-soft-danger {
+        background-color: rgba(231, 76, 60, 0.12);
+        color: #c0392b;
+    }
+
+    .bg-soft-warning {
+        background-color: rgba(243, 156, 18, 0.12);
+        color: #d68910;
+    }
+
+    .bg-soft-secondary {
+        background-color: rgba(108, 117, 125, 0.12);
+        color: #6c757d;
+    }
+
+    .btn-icon-hover {
+        transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    .btn-icon-hover:hover {
+        transform: translateY(-2px);
+        filter: brightness(1.05);
+    }
+
+    .btn-group {
+        gap: 8px;
+    }
+
+    .modal-content {
+        border-radius: 12px;
+        border: none;
+        overflow: hidden;
+    }
+
+    .modal-header {
+        background: linear-gradient(135deg, var(--color-primario) 0%, #1a4a6e 100%);
+        color: white;
+        border: none;
+        padding: 20px 25px;
+    }
+
+    .modal-header .btn-close {
+        filter: brightness(0) invert(1);
+    }
+
+    .modal-body {
+        padding: 25px;
+    }
+
+    .modal-footer {
+        background-color: var(--color-fondo);
+        border-top: 1px solid var(--color-borde);
+        padding: 15px 25px;
+    }
+
+    .form-label {
+        font-weight: 600;
+        color: var(--color-primario);
+        margin-bottom: 8px;
+        font-size: 0.85rem;
+    }
+
+    .form-control, .form-select {
+        border-radius: 8px;
+        border: 1px solid var(--color-borde);
+        padding: 10px 12px;
+        transition: all 0.2s ease;
+    }
+
+    .form-control:focus, .form-select:focus {
+        border-color: var(--color-secundario);
+        box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.1);
+    }
+
+    .dataTables_wrapper .dataTables_filter input {
+        border-radius: 20px;
+        padding: 8px 15px 8px 35px;
+        border: 1px solid var(--color-borde);
+        background-image: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="%23999" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>');
+        background-repeat: no-repeat;
+        background-position: 12px center;
+    }
+
+    .dataTables_wrapper .dataTables_length select {
+        border-radius: 8px;
+        padding: 5px 25px 5px 10px;
+        border: 1px solid var(--color-borde);
+    }
+
+    .paginate_button {
+        border-radius: 8px !important;
+        margin: 0 3px !important;
+        transition: all 0.2s ease !important;
+    }
+
+    .paginate_button.current {
+        background: var(--color-secundario) !important;
+        border-color: var(--color-secundario) !important;
+        color: white !important;
+    }
+
+    @keyframes fadeInUp {
+        from {
+            opacity: 0;
+            transform: translateY(20px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    .card {
+        animation: fadeInUp 0.5s ease;
+    }
+
+    .toast-message {
+        position: fixed;
+        top: 20px;
+        right: 20px;
+        z-index: 9999;
+        animation: slideInRight 0.3s ease;
+    }
+
+    @keyframes slideInRight {
+        from {
+            opacity: 0;
+            transform: translateX(100px);
+        }
+        to {
+            opacity: 1;
+            transform: translateX(0);
+        }
+    }
+</style>
+
 <div class="content">
+    <div class="row">
+        <div class="col-12">
+            <div class="card border-0 shadow-sm">
+                <div class="card-header d-flex justify-content-between align-items-center">
+                    <h3 class="m-0">
+                        <i class="fas fa-users me-2"></i> Gestionar Usuarios
+                    </h3>
+                    <a href="{% url 'registrar_usuario' %}" class="btn btn-light">
+                        <i class="fas fa-plus-circle me-2"></i> Añadir Usuario
+                    </a>
+                </div>
 
-<div class="row">
-    <div class="col-12">
-        <div class="card card-body border-0 shadow table-wrapper table-responsive">
-
-            <div class="d-flex flex-column flex-md-row justify-content-between align-items-start align-items-md-center mb-3">
-                <h3 class="text-primary fw-bold m-0">
-                    <i class="fas fa-users me-2"></i>Usuarios
-                </h3>
-
-                <a href="{% url 'registrar_usuario' %}" class="btn btn-success d-flex align-items-center gap-2 mt-2 mt-md-0 btn-hover-effect">
-                    <i class="fas fa-plus-circle"></i> Añadir usuario
-                </a>
+                <div class="table-wrapper p-3">
+                    <div class="dt-responsive table-responsive">
+                        <table id="mitablaUsuarios" class="table table-hover align-middle">
+                            <thead>
+                                <tr>
+                                    <th class="border-0">#</th>
+                                    <th class="border-0">Correo Electrónico</th>
+                                    <th class="border-0">Nombres</th>
+                                    <th class="border-0">Apellidos</th>
+                                    <th class="border-0 text-center">Rol</th>
+                                    <th class="border-0 text-center">Estado</th>
+                                    <th class="border-0 text-center">Acciones</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for usuario in usuarios %}
+                                <tr class="fila-usuario" data-usuario-id="{{ usuario.id }}">
+                                    <td class="fw-bold">{{ forloop.counter }}</td>
+                                    <td>
+                                        <div class="d-flex align-items-center gap-2">
+                                            <i class="fas fa-envelope text-muted"></i>
+                                            <span>{{ usuario.email }}</span>
+                                        </div>
+                                    </td>
+                                    <td>{{ usuario.first_name|default:"-" }}</td>
+                                    <td>{{ usuario.last_name|default:"-" }}</td>
+                                    <td class="text-center">
+                                        <span class="badge 
+                                            {% if usuario.rol == 'superadmin' %}bg-soft-primary
+                                            {% elif usuario.rol == 'admin' %}bg-soft-warning
+                                            {% else %}bg-soft-secondary{% endif %}">
+                                            <i class="fas 
+                                                {% if usuario.rol == 'superadmin' %}fa-crown
+                                                {% elif usuario.rol == 'admin' %}fa-user-shield
+                                                {% else %}fa-user{% endif %} me-1"></i>
+                                            {{ usuario.get_rol_display }}
+                                        </span>
+                                    </td>
+                                    <td class="text-center">
+                                        {% if usuario.is_active %}
+                                            <span class="badge bg-soft-success">
+                                                <i class="fas fa-circle me-1" style="font-size: 8px;"></i> Activo
+                                            </span>
+                                        {% else %}
+                                            <span class="badge bg-soft-danger">
+                                                <i class="fas fa-circle me-1" style="font-size: 8px;"></i> Inactivo
+                                            </span>
+                                        {% endif %}
+                                    </td>
+                                    <td class="text-center">
+                                        <div class="btn-group">
+                                            <button onclick="abrirModalEditar({{ usuario.id }})" 
+                                                    class="btn btn-primary btn-sm btn-icon-hover" 
+                                                    title="Editar usuario">
+                                                <i class="fas fa-edit"></i>
+                                            </button>
+                                            <button onclick="abrirModalEliminar({{ usuario.id }}, '{{ usuario.email|escapejs }}')" 
+                                                    class="btn btn-danger btn-sm btn-icon-hover" 
+                                                    title="Eliminar usuario">
+                                                <i class="fas fa-trash-alt"></i>
+                                            </button>
+                                        </div>
+                                    </td>
+                                </tr>
+                                {% empty %}
+                                <tr>
+                                    <td colspan="7" class="text-center py-5">
+                                        <i class="fas fa-users fa-4x text-muted mb-3 d-block"></i>
+                                        <h5 class="text-muted">No hay usuarios registrados</h5>
+                                        <p class="text-muted">Haz clic en "Añadir Usuario" para comenzar</p>
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
             </div>
-
-            <div class="dt-responsive table-responsive">
-                <table id="mitablaUsuarios" class="table table-hover table-striped">
-                    <thead class="bg-light">
-                        <tr>
-                            <th class="border-0">#</th>
-                            <th class="border-0">Usuario</th>
-                            <th class="border-0">Nombre</th>
-                            <th class="border-0">Apellido</th>
-                            <th class="border-0 text-center">Staff</th>
-                            <th class="border-0 text-center">Rol</th>
-                            <th class="border-0 text-center">Activo</th>
-                            <th class="border-0 text-center">Acciones</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {% for usuario in usuarios %}
-                        <tr class="align-middle fila-usuario" data-usuario-id="{{ usuario.id }}">
-                            <td>{{ forloop.counter }}</td>
-                            <td class="fw-semibold">{{ usuario.username }}</td>
-                            <td>{{ usuario.first_name|default:"-" }}</td>
-                            <td>{{ usuario.last_name|default:"-" }}</td>
-
-                            <td class="text-center">
-                                {% if usuario.is_staff %}
-                                    <span class="badge bg-soft-success text-success px-3 py-2 rounded-pill">
-                                        <i class="fas fa-check-circle me-1"></i> Staff
-                                    </span>
-                                {% else %}
-                                    <span class="badge bg-soft-secondary text-secondary px-3 py-2 rounded-pill">
-                                        <i class="fas fa-user me-1"></i> Normal
-                                    </span>
-                                {% endif %}
-                            </td>
-
-                            <td class="text-center">
-                                <span class="badge bg-soft-primary text-primary px-3 py-2 rounded-pill text-uppercase">
-                                    <i class="fas fa-tag me-1"></i>
-                                    {{ usuario.get_rol_display }}
-                                </span>
-                            </td>
-
-                            <td class="text-center">
-                                {% if usuario.is_active %}
-                                    <span class="badge bg-soft-success text-success px-3 py-2 rounded-pill">
-                                        <i class="fas fa-circle me-1" style="font-size: 8px;"></i> Activo
-                                    </span>
-                                {% else %}
-                                    <span class="badge bg-soft-danger text-danger px-3 py-2 rounded-pill">
-                                        <i class="fas fa-circle me-1" style="font-size: 8px;"></i> Inactivo
-                                    </span>
-                                {% endif %}
-                            </td>
-
-                            <td class="text-center">
-                                <div class="btn-group gap-2">
-                                    <button onclick="abrirModalEditar({{ usuario.id }})" 
-                                            class="btn btn-primary btn-sm btn-icon-hover" 
-                                            title="Editar usuario">
-                                        <i class="fas fa-edit"></i>
-                                    </button>
-
-                                    <button onclick="abrirModalEliminar({{ usuario.id }}, '{{ usuario.username|escapejs }}')" 
-                                            class="btn btn-danger btn-sm btn-icon-hover" 
-                                            title="Eliminar usuario">
-                                        <i class="fas fa-trash"></i>
-                                    </button>
-                                </div>
-                            </td>
-                        </tr>
-                        {% empty %}
-                        <tr>
-                            <td colspan="8" class="text-center py-5">
-                                <i class="fas fa-users fa-3x text-muted mb-3 d-block"></i>
-                                <p class="text-muted mb-0">No hay usuarios registrados</p>
-                            </td>
-                        </tr>
-                        {% endfor %}
-                    </tbody>
-                </table>
-            </div>
-
         </div>
     </div>
 </div>
 
-<!-- MODAL EDITAR (UN SOLO MODAL FUERA DEL BUCLE) -->
+<!-- MODAL EDITAR (SIN CÉDULA) -->
 <div class="modal fade" id="editUserModal" tabindex="-1" data-bs-backdrop="static" data-bs-keyboard="false">
     <div class="modal-dialog modal-lg modal-dialog-centered">
         <div class="modal-content">
             <form method="post" id="formEditarUsuario">
                 {% csrf_token %}
-                <div class="modal-header bg-primary text-white">
+                <div class="modal-header">
                     <h5 class="modal-title">
                         <i class="fas fa-edit me-2"></i>Editar Usuario
                     </h5>
@@ -118,71 +352,65 @@
                 </div>
 
                 <div class="modal-body">
-                    <div class="row">
-                        <div class="col-md-6 mb-3">
-                            <label class="form-label fw-semibold">
-                                <i class="fas fa-user me-1"></i>Nombre
-                            </label>
-                            <input type="text" name="first_name" id="edit_first_name" class="form-control">
-                        </div>
-
-                        <div class="col-md-6 mb-3">
-                            <label class="form-label fw-semibold">
-                                <i class="fas fa-user me-1"></i>Apellido
-                            </label>
-                            <input type="text" name="last_name" id="edit_last_name" class="form-control">
-                        </div>
-
-                        <div class="col-md-6 mb-3">
-                            <label class="form-label fw-semibold">
-                                <i class="fas fa-envelope me-1"></i>Usuario (email)
-                            </label>
-                            <input type="email" name="username" id="edit_username" class="form-control" required>
-                        </div>
-
-                        <div class="col-md-6 mb-3">
-                            <label class="form-label fw-semibold">
-                                <i class="fas fa-envelope me-1"></i>Email
+                    <div class="row g-3">
+                        <div class="col-md-12">
+                            <label class="form-label">
+                                <i class="fas fa-envelope me-1 text-primary"></i>Correo Electrónico
                             </label>
                             <input type="email" name="email" id="edit_email" class="form-control" required>
+                            <small class="text-muted">Este será su usuario para iniciar sesión</small>
                         </div>
 
-                        <div class="col-md-6 mb-3">
-                            <label class="form-label fw-semibold">
-                                <i class="fas fa-user-tag me-1"></i>Rol
+                        <div class="col-md-6">
+                            <label class="form-label">
+                                <i class="fas fa-user me-1 text-primary"></i>Nombres
                             </label>
-                            <select name="rol" id="edit_rol" class="form-select">
+                            <input type="text" name="first_name" id="edit_first_name" class="form-control" required>
+                        </div>
+
+                        <div class="col-md-6">
+                            <label class="form-label">
+                                <i class="fas fa-user me-1 text-primary"></i>Apellidos
+                            </label>
+                            <input type="text" name="last_name" id="edit_last_name" class="form-control" required>
+                        </div>
+
+                        <div class="col-md-6">
+                            <label class="form-label">
+                                <i class="fas fa-user-tag me-1 text-primary"></i>Rol
+                            </label>
+                            <select name="rol" id="edit_rol" class="form-select" required>
                                 <option value="superadmin">Super Administrador</option>
                                 <option value="admin">Administrador</option>
                                 <option value="conductor">Conductor</option>
                             </select>
                         </div>
 
-                        <div class="col-md-6 mb-3">
-                            <label class="form-label fw-semibold">
-                                <i class="fas fa-key me-1"></i>Nueva contraseña
+                        <div class="col-md-6">
+                            <label class="form-label">
+                                <i class="fas fa-lock me-1 text-primary"></i>Nueva Contraseña
                             </label>
-                            <input type="password" name="password" class="form-control" placeholder="Opcional">
-                            <small class="text-muted">Dejar en blanco para mantener la actual</small>
+                            <input type="password" name="password" id="edit_password" class="form-control" placeholder="Opcional">
+                            <small class="text-muted">Mínimo 8 caracteres. Dejar en blanco para mantener la actual</small>
                         </div>
 
-                        <div class="col-md-12 mb-3">
+                        <div class="col-md-12">
                             <div class="form-check">
                                 <input type="checkbox" name="is_active" id="edit_is_active" class="form-check-input">
-                                <label class="form-check-label fw-semibold">
-                                    <i class="fas fa-check-circle me-1"></i>Usuario activo
+                                <label class="form-check-label">
+                                    <i class="fas fa-check-circle text-success me-1"></i>Usuario activo
                                 </label>
                             </div>
                         </div>
                     </div>
                 </div>
 
-                <div class="modal-footer bg-light">
+                <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
                         <i class="fas fa-times me-1"></i>Cancelar
                     </button>
-                    <button type="submit" class="btn btn-success">
-                        <i class="fas fa-save me-1"></i>Guardar cambios
+                    <button type="submit" class="btn btn-primary">
+                        <i class="fas fa-save me-1"></i>Guardar Cambios
                     </button>
                 </div>
             </form>
@@ -190,20 +418,21 @@
     </div>
 </div>
 
-<!-- MODAL ELIMINAR (UN SOLO MODAL) -->
+<!-- MODAL ELIMINAR -->
 <div class="modal fade" id="deleteUserModal" tabindex="-1" data-bs-backdrop="static">
     <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content">
             <div class="modal-header bg-danger text-white">
                 <h5 class="modal-title">
-                    <i class="fas fa-trash-alt me-2"></i>Eliminar usuario
+                    <i class="fas fa-trash-alt me-2"></i>Eliminar Usuario
                 </h5>
                 <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
             </div>
 
             <div class="modal-body text-center py-4">
                 <i class="fas fa-exclamation-triangle fa-4x text-warning mb-3"></i>
-                <p class="mb-0 fs-5">¿Eliminar al usuario <strong id="deleteUserName"></strong>?</p>
+                <p class="mb-2 fs-5">¿Estás seguro de eliminar al usuario?</p>
+                <p class="mb-0 fw-bold text-danger" id="deleteUserEmail"></p>
                 <small class="text-muted">Esta acción no se puede deshacer</small>
             </div>
 
@@ -224,10 +453,9 @@
 var usuariosData = {
     {% for usuario in usuarios %}
     {{ usuario.id }}: {
+        email: "{{ usuario.email|escapejs }}",
         first_name: "{{ usuario.first_name|escapejs }}",
         last_name: "{{ usuario.last_name|escapejs }}",
-        username: "{{ usuario.username|escapejs }}",
-        email: "{{ usuario.email|escapejs }}",
         rol: "{{ usuario.rol|escapejs }}",
         is_active: {% if usuario.is_active %}true{% else %}false{% endif %}
     },
@@ -237,12 +465,12 @@ var usuariosData = {
 function abrirModalEditar(usuarioId) {
     var usuario = usuariosData[usuarioId];
     if (usuario) {
+        document.getElementById('edit_email').value = usuario.email;
         document.getElementById('edit_first_name').value = usuario.first_name;
         document.getElementById('edit_last_name').value = usuario.last_name;
-        document.getElementById('edit_username').value = usuario.username;
-        document.getElementById('edit_email').value = usuario.email;
         document.getElementById('edit_rol').value = usuario.rol;
         document.getElementById('edit_is_active').checked = usuario.is_active;
+        document.getElementById('edit_password').value = '';
         
         var form = document.getElementById('formEditarUsuario');
         form.action = "{% url 'editar_usuario' 0 %}".replace('0', usuarioId);
@@ -252,22 +480,32 @@ function abrirModalEditar(usuarioId) {
     }
 }
 
-function abrirModalEliminar(usuarioId, usuarioNombre) {
-    document.getElementById('deleteUserName').innerHTML = usuarioNombre;
+function abrirModalEliminar(usuarioId, usuarioEmail) {
+    document.getElementById('deleteUserEmail').innerHTML = usuarioEmail;
     document.getElementById('deleteUserLink').href = "{% url 'eliminar_usuario' 0 %}".replace('0', usuarioId);
     
     var modal = new bootstrap.Modal(document.getElementById('deleteUserModal'));
     modal.show();
 }
 
+// Validación de nombres y apellidos
+['edit_first_name', 'edit_last_name'].forEach(id => {
+    const campo = document.getElementById(id);
+    if (campo) {
+        campo.addEventListener('input', function() {
+            this.value = this.value.replace(/[^A-Za-zÁÉÍÓÚáéíóúÑñ\s]/g, '');
+        });
+    }
+});
+
 $(document).ready(function () {
     $('#mitablaUsuarios').DataTable({
         pagingType: "full_numbers",
         responsive: true,
         language: {
+            url: "//cdn.datatables.net/plug-ins/1.13.6/i18n/es-ES.json",
             search: "Buscar:",
             lengthMenu: "Mostrar _MENU_ registros",
-            zeroRecords: "No se encontraron usuarios",
             info: "Mostrando _START_ a _END_ de _TOTAL_ usuarios",
             infoEmpty: "Sin registros",
             infoFiltered: "(filtrado de _MAX_ total)",
@@ -282,124 +520,30 @@ $(document).ready(function () {
              '<"row"<"col-sm-12"tr>>' +
              '<"row mt-3"<"col-sm-12 col-md-5"i><"col-sm-12 col-md-7"p>>',
         pageLength: 10,
-        lengthMenu: [[5, 10, 25, 50, -1], [5, 10, 25, 50, "Todos"]]
+        lengthMenu: [[5, 10, 25, 50, -1], [5, 10, 25, 50, "Todos"]],
+        order: [[0, 'asc']]
     });
 });
 
-// Estilos CSS adicionales para mejor rendimiento y diseño
-(function() {
-    var style = document.createElement('style');
-    style.textContent = `
-        /* Estilos suaves para evitar parpadeos */
-        .table-hover > tbody > tr {
-            transition: background-color 0.2s ease;
-        }
-        
-        .table-hover > tbody > tr:hover {
-            background-color: rgba(13, 110, 253, 0.05) !important;
-        }
-        
-        /* Badges con colores suaves */
-        .bg-soft-primary {
-            background-color: rgba(13, 110, 253, 0.1);
-        }
-        
-        .bg-soft-success {
-            background-color: rgba(25, 135, 84, 0.1);
-        }
-        
-        .bg-soft-danger {
-            background-color: rgba(220, 53, 69, 0.1);
-        }
-        
-        .bg-soft-secondary {
-            background-color: rgba(108, 117, 125, 0.1);
-        }
-        
-        /* Efectos hover en botones sin parpadeo */
-        .btn-icon-hover {
-            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
-        }
-        
-        .btn-icon-hover:hover {
-            transform: translateY(-2px);
-            filter: brightness(1.05);
-        }
-        
-        .btn-icon-hover:active {
-            transform: translateY(0);
-        }
-        
-        /* Efecto hover en el botón añadir */
-        .btn-hover-effect {
-            transition: all 0.2s ease;
-        }
-        
-        .btn-hover-effect:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-        }
-        
-        /* Animación suave del modal */
-        .modal.fade .modal-dialog {
-            transition: transform 0.2s ease-out;
-        }
-        
-        /* Mejora visual de la tabla */
-        .table thead th {
-            font-weight: 600;
-            text-transform: uppercase;
-            font-size: 0.8rem;
-            letter-spacing: 0.5px;
-        }
-        
-        /* Inputs con mejor apariencia */
-        .form-control:focus, .form-select:focus {
-            border-color: #86b7fe;
-            box-shadow: 0 0 0 0.2rem rgba(13, 110, 253, 0.15);
-        }
-        
-        /* Badges redondeados */
-        .rounded-pill {
-            border-radius: 50rem !important;
-        }
-        
-        /* Mejora de espaciado */
-        .btn-group {
-            gap: 0.5rem;
-        }
-        
-        /* DataTables personalizado */
-        .dataTables_wrapper .dataTables_filter input {
-            border-radius: 20px;
-            padding: 0.375rem 0.75rem 0.375rem 2rem;
-            border: 1px solid #dee2e6;
-        }
-        
-        .dataTables_wrapper .dataTables_filter input:focus {
-            border-color: #86b7fe;
-            outline: 0;
-            box-shadow: 0 0 0 0.2rem rgba(13, 110, 253, 0.15);
-        }
-        
-        .dataTables_wrapper .dataTables_length select {
-            border-radius: 20px;
-            padding: 0.375rem 2rem 0.375rem 0.75rem;
-        }
-        
-        /* Paginación mejorada */
-        .paginate_button {
-            border-radius: 8px !important;
-            margin: 0 2px !important;
-            transition: all 0.2s ease !important;
-        }
-        
-        .paginate_button:hover {
-            transform: translateY(-1px) !important;
-        }
+function mostrarToast(tipo, mensaje) {
+    const toast = document.createElement('div');
+    toast.className = `toast-message alert alert-${tipo === 'success' ? 'success' : 'danger'} shadow-lg`;
+    toast.innerHTML = `
+        <div class="d-flex align-items-center gap-2">
+            <i class="fas fa-${tipo === 'success' ? 'check-circle' : 'exclamation-circle'} fa-lg"></i>
+            <div class="flex-grow-1">${mensaje}</div>
+            <button type="button" class="btn-close" onclick="this.parentElement.parentElement.remove()"></button>
+        </div>
     `;
-    document.head.appendChild(style);
-})();
+    document.body.appendChild(toast);
+    setTimeout(() => toast.remove(), 5000);
+}
 </script>
+
+<!-- DataTables CSS y JS -->
+<link rel="stylesheet" href="https://cdn.datatables.net/1.13.6/css/dataTables.bootstrap5.min.css">
+<script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
+<script src="https://cdn.datatables.net/1.13.6/js/dataTables.bootstrap5.min.js"></script>
+<script src="https://cdn.datatables.net/responsive/2.5.0/js/dataTables.responsive.min.js"></script>
 
 {% endblock %}

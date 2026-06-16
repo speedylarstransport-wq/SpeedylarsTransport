@@ -33,7 +33,8 @@ class Usuario(AbstractUser):
             ('superadmin', 'Super Administrador'),
             ('admin', 'Administrador'),
             ('conductor', 'Conductor'),
-        ]
+        ],
+        default='conductor'
     )
 
     # Necesario cuando se hereda AbstractUser
@@ -48,6 +49,8 @@ class Usuario(AbstractUser):
         related_name='usuarios_permisos',
         blank=True
     )
+
+    email = models.EmailField(unique=True, blank=False, null=False)
 
     class Meta:
         db_table = 'usuarios'

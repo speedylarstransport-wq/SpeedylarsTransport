@@ -1,28 +1,20 @@
 from django import forms
-from django.contrib.auth.forms import UserCreationForm
+from django.contrib.auth.forms import UserCreationForm, UserChangeForm
 from django.core.validators import validate_email
 from django.core.exceptions import ValidationError
 from .models import Usuario, Conductor
 import re
 
 
-from django import forms
-from django.contrib.auth.forms import UserCreationForm
-from django.core.validators import validate_email
-from django.core.exceptions import ValidationError
-import re
-from .models import Usuario
-from django.contrib.auth.password_validation import validate_password
-
 class UsuarioForm(UserCreationForm):
-    # Personalizar widgets y ayuda
-    username = forms.CharField(
-        label="Cédula",
-        help_text="Número de cédula de 10 dígitos (Ej: 1234567890)",
-        widget=forms.TextInput(attrs={
+    # Solo email como campo principal
+    email = forms.EmailField(
+        label="Correo Electrónico",
+        help_text="Este correo será tu usuario para iniciar sesión",
+        widget=forms.EmailInput(attrs={
             'class': 'form-control',
-            'placeholder': '1234567890',
-            'maxlength': '10'
+            'placeholder': 'correo@ejemplo.com',
+            'autofocus': True
         })
     )
     
@@ -42,18 +34,9 @@ class UsuarioForm(UserCreationForm):
         })
     )
     
-    email = forms.EmailField(
-        label="Correo Electrónico",
-        widget=forms.EmailInput(attrs={
-            'class': 'form-control',
-            'placeholder': 'speedylars@correo.com'
-        })
-    )
-    
     rol = forms.ChoiceField(
         label="Rol del Usuario",
         choices=[
-            ('', 'Seleccione un rol...'),
             ('superadmin', 'Super Administrador'),
             ('admin', 'Administrador'),
             ('conductor', 'Conductor'),
@@ -63,14 +46,14 @@ class UsuarioForm(UserCreationForm):
         })
     )
     
-    # Personalizar los campos de contraseña
+    # Personalizar los campos de contraseña (requisitos simplificados)
     password1 = forms.CharField(
         label="Contraseña",
         widget=forms.PasswordInput(attrs={
             'class': 'form-control',
             'placeholder': 'Ingrese su contraseña'
         }),
-        help_text="Mínimo 8 caracteres. No se requieren caracteres especiales."
+        help_text="Mínimo 8 caracteres. Debe incluir una letra mayúscula, una minúscula y un número."
     )
     
     password2 = forms.CharField(
@@ -84,10 +67,9 @@ class UsuarioForm(UserCreationForm):
     class Meta:
         model = Usuario
         fields = [
-            'username',
+            'email',
             'first_name',
             'last_name',
-            'email',
             'rol',
             'password1',
             'password2',
@@ -95,33 +77,13 @@ class UsuarioForm(UserCreationForm):
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        # Personalizar mensajes de ayuda para contraseñas
-        self.fields['password1'].help_text = (
-            "Tu contraseña debe tener al menos 8 caracteres. "
-            "Puede contener letras y números."
-        )
+        # El campo username existe en el modelo pero lo ocultamos
+        # Verificamos si el campo existe antes de modificarlo
+        if 'username' in self.fields:
+            self.fields['username'].required = False
+            self.fields['username'].widget = forms.HiddenInput()
 
     # ---------- VALIDACIONES ----------
-    def clean_username(self):
-        username = self.cleaned_data.get('username', '').strip()
-        
-        if not username:
-            raise forms.ValidationError("La cédula es obligatoria.")
-        
-        # Validar que sean solo números
-        if not username.isdigit():
-            raise forms.ValidationError("La cédula debe contener solo números.")
-        
-        # Validar que tenga 10 dígitos
-        if len(username) != 10:
-            raise forms.ValidationError("La cédula debe tener exactamente 10 dígitos.")
-        
-        # Verificar que no exista ya
-        if Usuario.objects.filter(username=username).exists():
-            raise forms.ValidationError("Ya existe un usuario con esta cédula.")
-        
-        return username
-
     def clean_email(self):
         email = self.cleaned_data.get('email', '').strip().lower()
 
@@ -171,15 +133,22 @@ class UsuarioForm(UserCreationForm):
         
         if not password1:
             raise forms.ValidationError("La contraseña es obligatoria.")
-        
-        # Validación mínima: al menos 8 caracteres
+
+        # Validación 1: mínimo 8 caracteres
         if len(password1) < 8:
             raise forms.ValidationError("La contraseña debe tener al menos 8 caracteres.")
         
-        # Opcional: Validar que no sea demasiado común
-        common_passwords = ['12345678', 'password', 'contraseña', 'admin123', '00000000']
-        if password1.lower() in common_passwords:
-            raise forms.ValidationError("Por favor, elija una contraseña más segura.")
+        # Validación 2: debe contener al menos una letra mayúscula
+        if not re.search(r'[A-Z]', password1):
+            raise forms.ValidationError("La contraseña debe contener al menos una letra mayúscula.")
+        
+        # Validación 3: debe contener al menos una letra minúscula
+        if not re.search(r'[a-z]', password1):
+            raise forms.ValidationError("La contraseña debe contener al menos una letra minúscula.")
+        
+        # Validación 4: debe contener al menos un número
+        if not re.search(r'[0-9]', password1):
+            raise forms.ValidationError("La contraseña debe contener al menos un número.")
         
         return password1
 
@@ -204,6 +173,9 @@ class UsuarioForm(UserCreationForm):
     def save(self, commit=True):
         user = super().save(commit=False)
         
+        # Usar el email como username también (requerido por AbstractUser)
+        user.username = self.cleaned_data['email']
+        
         # Todos los usuarios nuevos están activos por defecto
         user.is_active = True
         
@@ -222,20 +194,19 @@ class UsuarioForm(UserCreationForm):
             user.save()
             
         return user
-    
 
-    
+
 class ConductorForm(forms.ModelForm):
     class Meta:
         model = Conductor
-        fields = ['usuario', 'nombres_cond', 'apell_cond', 'cedla_cond', 'tipolicen_cond', 'telfno_cond']
+        fields = ['nombres_cond', 'apell_cond', 'cedla_cond', 'tipolicen_cond', 'telfno_cond']
 
         widgets = {
-            'nombres_cond': forms.TextInput(attrs={'placeholder': 'Nombres'}),
-            'apell_cond': forms.TextInput(attrs={'placeholder': 'Apellidos'}),
-            'cedla_cond': forms.TextInput(attrs={'placeholder': 'Cédula'}),
-            'tipolicen_cond': forms.Select(attrs={'placeholder': 'Tipo de licencia'}),
-            'telfno_cond': forms.TextInput(attrs={'placeholder': 'Teléfono'}),
+            'nombres_cond': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Nombres'}),
+            'apell_cond': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Apellidos'}),
+            'cedla_cond': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Cédula'}),
+            'tipolicen_cond': forms.Select(attrs={'class': 'form-control'}),
+            'telfno_cond': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Teléfono'}),
         }
 
     def clean_cedla_cond(self):

@@ -255,7 +255,7 @@
         font-weight: bold;
     }
 
-    /* Indicador de fortaleza de contraseña */
+    /* Indicador de fortaleza de contraseña (simplificado) */
     .contenedor-fortaleza {
         margin-top: 8px;
     }
@@ -330,13 +330,27 @@
         box-shadow: none;
     }
 
-    /* Validación en tiempo real */
-    .grupo-formulario input:not(:placeholder-shown):valid {
-        border-color: var(--color-exito);
+    /* Contenedor de contraseña */
+    .contenedor-password {
+        position: relative;
     }
 
-    .grupo-formulario input:not(:placeholder-shown):invalid {
-        border-color: var(--color-peligro);
+    .toggle-password {
+        position: absolute;
+        right: 35px;
+        top: 50%;
+        transform: translateY(-50%);
+        background: none;
+        border: none;
+        color: var(--color-placeholder);
+        cursor: pointer;
+        padding: 0;
+        font-size: 0.9rem;
+        z-index: 2;
+    }
+
+    .toggle-password:hover {
+        color: var(--color-secundario);
     }
 
     /* Animaciones */
@@ -355,54 +369,6 @@
     .mensaje-exito,
     .mensaje-bienvenida {
         animation: fadeIn 0.3s ease;
-    }
-
-    /* Estilos específicos para campos */
-    #id_username {
-        font-family: 'Courier New', monospace;
-        font-weight: 500;
-        letter-spacing: 0.5px;
-    }
-
-    #id_rol {
-        appearance: none;
-        background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' fill='%2395a5a6' viewBox='0 0 16 16'%3E%3Cpath d='M7.247 11.14 2.451 5.658C1.885 5.013 2.345 4 3.204 4h9.592a1 1 0 0 1 .753 1.659l-4.796 5.48a1 1 0 0 1-1.506 0z'/%3E%3C/svg%3E");
-        background-repeat: no-repeat;
-        background-position: right 15px center;
-        padding-right: 35px;
-    }
-
-    /* Contador de caracteres */
-    .contador-caracteres {
-        position: absolute;
-        right: 35px;
-        top: 50%;
-        transform: translateY(-50%);
-        font-size: 0.8rem;
-        color: var(--color-placeholder);
-        pointer-events: none;
-    }
-
-    /* Contenedor de contraseña */
-    .contenedor-password {
-        position: relative;
-    }
-
-    .toggle-password {
-        position: absolute;
-        right: 35px;
-        top: 50%;
-        transform: translateY(-50%);
-        background: none;
-        border: none;
-        color: var(--color-placeholder);
-        cursor: pointer;
-        padding: 0;
-        font-size: 0.9rem;
-    }
-
-    .toggle-password:hover {
-        color: var(--color-secundario);
     }
 </style>
 
@@ -464,22 +430,21 @@
                 {% csrf_token %}
                 
                 <div class="grid-formulario">
-                    <!-- Cédula -->
+                    <!-- CORREO ELECTRÓNICO (Principal para login) -->
                     <div class="grupo-formulario campo-ancho-completo">
-                        <label for="id_username" class="etiqueta-requerida">
-                            <i class="fas fa-id-card"></i> Número de Cédula
+                        <label for="id_email" class="etiqueta-requerida">
+                            <i class="fas fa-envelope"></i> Correo Electrónico
                         </label>
                         <div class="contenedor-input">
-                            {{ form.username }}
-                            <span class="icono-campo">#️⃣</span>
-                            <span class="contador-caracteres" id="contadorCedula">0/10</span>
+                            {{ form.email }}
+                            <span class="icono-campo">✉️</span>
                         </div>
-                        {% if form.username.help_text %}
-                            <span class="mensaje-ayuda">{{ form.username.help_text }}</span>
-                        {% endif %}
-                        {% if form.username.errors %}
+                        <span class="mensaje-ayuda">
+                            <i class="fas fa-info-circle"></i> Este correo será tu usuario para iniciar sesión
+                        </span>
+                        {% if form.email.errors %}
                             <ul class="lista-errores">
-                                {% for error in form.username.errors %}
+                                {% for error in form.email.errors %}
                                     <li>{{ error }}</li>
                                 {% endfor %}
                             </ul>
@@ -522,24 +487,6 @@
                         {% endif %}
                     </div>
 
-                    <!-- Correo Electrónico -->
-                    <div class="grupo-formulario campo-ancho-completo">
-                        <label for="id_email" class="etiqueta-requerida">
-                            <i class="fas fa-envelope"></i> Correo Electrónico
-                        </label>
-                        <div class="contenedor-input">
-                            {{ form.email }}
-                            <span class="icono-campo">✉️</span>
-                        </div>
-                        {% if form.email.errors %}
-                            <ul class="lista-errores">
-                                {% for error in form.email.errors %}
-                                    <li>{{ error }}</li>
-                                {% endfor %}
-                            </ul>
-                        {% endif %}
-                    </div>
-
                     <!-- Rol -->
                     <div class="grupo-formulario campo-ancho-completo">
                         <label for="id_rol" class="etiqueta-requerida">
@@ -571,7 +518,7 @@
                             </button>
                         </div>
                         
-                        <!-- Indicador de fortaleza -->
+                        <!-- Indicador de fortaleza simplificado -->
                         <div class="contenedor-fortaleza">
                             <div class="indicador-fortaleza">
                                 <div class="nivel-fortaleza" id="indicadorFortaleza"></div>
@@ -579,9 +526,9 @@
                             <div class="texto-fortaleza" id="textoFortaleza"></div>
                         </div>
                         
-                        {% if form.password1.help_text %}
-                            <span class="mensaje-ayuda">{{ form.password1.help_text }}</span>
-                        {% endif %}
+                        <span class="mensaje-ayuda">
+                            <i class="fas fa-info-circle"></i> Mínimo 8 caracteres, debe incluir una mayúscula, una minúscula y un número
+                        </span>
                         {% if form.password1.errors %}
                             <ul class="lista-errores">
                                 {% for error in form.password1.errors %}
@@ -632,44 +579,31 @@
         const indicadorFortaleza = document.getElementById('indicadorFortaleza');
         const textoFortaleza = document.getElementById('textoFortaleza');
         const botonEnviar = document.getElementById('botonEnviar');
-        const contadorCedula = document.getElementById('contadorCedula');
-        const campoCedula = document.getElementById('id_username');
         
-        // Inicializar contador de cédula
-        if (campoCedula && contadorCedula) {
-            contadorCedula.textContent = `${campoCedula.value.length}/10`;
-            
-            campoCedula.addEventListener('input', function(e) {
-                // Permitir solo números
-                this.value = this.value.replace(/[^0-9]/g, '');
+        // Validar nombres y apellidos (solo letras y espacios)
+        const campoNombres = document.getElementById('id_first_name');
+        const campoApellidos = document.getElementById('id_last_name');
+        const campoEmail = document.getElementById('id_email');
+        
+        // Validación de email en tiempo real
+        if (campoEmail) {
+            campoEmail.addEventListener('input', function() {
+                const email = this.value;
+                const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
                 
-                // Limitar a 10 caracteres
-                if (this.value.length > 10) {
-                    this.value = this.value.slice(0, 10);
-                }
-                
-                // Actualizar contador
-                contadorCedula.textContent = `${this.value.length}/10`;
-                
-                // Cambiar color del contador
-                if (this.value.length === 10) {
-                    contadorCedula.style.color = '#27ae60';
+                if (email && emailRegex.test(email)) {
                     this.classList.remove('campo-invalido');
                     this.classList.add('campo-valido');
-                } else if (this.value.length > 0) {
-                    contadorCedula.style.color = '#f39c12';
+                } else if (email) {
                     this.classList.remove('campo-valido');
+                    this.classList.add('campo-invalido');
                 } else {
-                    contadorCedula.style.color = '#95a5a6';
                     this.classList.remove('campo-valido', 'campo-invalido');
                 }
             });
         }
         
-        // Validar nombres y apellidos (solo letras y espacios)
-        const campoNombres = document.getElementById('id_first_name');
-        const campoApellidos = document.getElementById('id_last_name');
-        
+        // Validar nombres y apellidos
         [campoNombres, campoApellidos].forEach(campo => {
             if (campo) {
                 campo.addEventListener('input', function() {
@@ -686,21 +620,23 @@
             }
         });
         
-        // Validación de fortaleza de contraseña
+        // Validación de fortaleza de contraseña (simplificada)
         if (password1) {
             function calcularFortaleza(password) {
                 let score = 0;
                 
-                // Longitud mínima
+                // Longitud mínima 8
                 if (password.length >= 8) score += 1;
-                if (password.length >= 12) score += 1;
+                if (password.length >= 10) score += 1;
                 
-                // Caracteres mixtos
+                // Tiene mayúscula
                 if (/[A-Z]/.test(password)) score += 1;
+                // Tiene minúscula
                 if (/[a-z]/.test(password)) score += 1;
+                // Tiene número
                 if (/[0-9]/.test(password)) score += 1;
                 
-                return score;
+                return Math.min(score, 5);
             }
             
             password1.addEventListener('input', function() {
@@ -730,7 +666,7 @@
         
         // Validar coincidencia de contraseñas
         function validarCoincidenciaContraseñas() {
-            if (password1.value && password2.value) {
+            if (password1 && password2 && password1.value && password2.value) {
                 if (password1.value !== password2.value) {
                     password2.classList.add('campo-invalido');
                     password2.classList.remove('campo-valido');
@@ -790,16 +726,51 @@
                     formularioValido = false;
                     
                     const label = campo.closest('.grupo-formulario')?.querySelector('label');
-                    const fieldName = label?.textContent || 'Campo';
-                    errores.push(`${fieldName.replace(' *', '')} es obligatorio`);
+                    let fieldName = label?.textContent || 'Campo';
+                    fieldName = fieldName.replace(' *', '');
+                    errores.push(`${fieldName} es obligatorio`);
                 }
             });
             
-            // Validar cédula de 10 dígitos
-            if (campoCedula && campoCedula.value.length !== 10) {
-                campoCedula.classList.add('campo-invalido');
-                formularioValido = false;
-                errores.push('La cédula debe tener 10 dígitos');
+            // Validar email
+            if (campoEmail && campoEmail.value) {
+                const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+                if (!emailRegex.test(campoEmail.value)) {
+                    campoEmail.classList.add('campo-invalido');
+                    formularioValido = false;
+                    errores.push('Ingrese un correo electrónico válido');
+                }
+            }
+            
+            // Validar contraseña
+            if (password1 && password1.value) {
+                // Validar longitud mínima 8
+                if (password1.value.length < 8) {
+                    password1.classList.add('campo-invalido');
+                    formularioValido = false;
+                    errores.push('La contraseña debe tener al menos 8 caracteres');
+                }
+                
+                // Validar que tenga al menos una mayúscula
+                if (!/[A-Z]/.test(password1.value)) {
+                    password1.classList.add('campo-invalido');
+                    formularioValido = false;
+                    errores.push('La contraseña debe contener al menos una letra mayúscula');
+                }
+                
+                // Validar que tenga al menos una minúscula
+                if (!/[a-z]/.test(password1.value)) {
+                    password1.classList.add('campo-invalido');
+                    formularioValido = false;
+                    errores.push('La contraseña debe contener al menos una letra minúscula');
+                }
+                
+                // Validar que tenga al menos un número
+                if (!/[0-9]/.test(password1.value)) {
+                    password1.classList.add('campo-invalido');
+                    formularioValido = false;
+                    errores.push('La contraseña debe contener al menos un número');
+                }
             }
             
             // Validar coincidencia de contraseñas
@@ -826,6 +797,10 @@
                     </div>
                 `;
                 
+                // Limpiar mensajes anteriores
+                const mensajesExistentes = mensajesContainer.querySelectorAll('.mensaje-error');
+                mensajesExistentes.forEach(msg => msg.remove());
+                
                 mensajesContainer.prepend(mensajeError);
                 
                 // Scroll al primer error
@@ -843,10 +818,9 @@
             botonEnviar.disabled = true;
         });
         
-        // Auto-focus en primer campo si está vacío
-        const primerCampo = formulario.querySelector('input[type="text"], input[type="email"]');
-        if (primerCampo && !primerCampo.value) {
-            primerCampo.focus();
+        // Auto-focus en el campo de email
+        if (campoEmail && !campoEmail.value) {
+            campoEmail.focus();
         }
     });
 </script>

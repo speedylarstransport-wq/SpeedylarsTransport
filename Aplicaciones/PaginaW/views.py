@@ -211,21 +211,23 @@ def login_view(request):
         return redirect('inicio')
 
     if request.method == 'POST':
-        username = request.POST.get('username', '').strip().lower()
+        # Ahora el campo 'username' del formulario contendrá el email
+        email = request.POST.get('username', '').strip().lower()
         password = request.POST.get('password')
 
-        user = authenticate(request, username=username, password=password)
+        # Autenticar usando email (porque USERNAME_FIELD es 'email')
+        user = authenticate(request, username=email, password=password)
 
         if user is not None:
             if user.is_active:
                 login(request, user)
 
-                # 🔁 Redirección si viene de @login_required
+                # Redirección si viene de @login_required
                 next_url = request.POST.get('next') or request.GET.get('next')
                 if next_url:
                     return redirect(next_url)
 
-                messages.success(request, f'Bienvenido/a {user.first_name}')
+                messages.success(request, f'¡Bienvenido/a {user.first_name}!')
                 return redirect('inicio')
             else:
                 messages.warning(
@@ -233,10 +235,9 @@ def login_view(request):
                     'Tu cuenta está desactivada. Contacta al administrador.'
                 )
         else:
-            messages.error(request, 'Usuario o contraseña incorrectos.')
+            messages.error(request, 'Correo electrónico o contraseña incorrectos.')
 
     return render(request, 'login.html')
-
 
 def logout_view(request):
     logout(request)
@@ -272,8 +273,8 @@ def registrar_usuario(request):
 # =====================================================
 # LISTA DE USUARIOS
 # =====================================================
-#@login_required
-#@rol_requerido(['admin', 'superadmin'])
+@login_required
+@rol_requerido(['admin', 'superadmin'])
 def lista_usuarios(request):
     usuarios = Usuario.objects.all().order_by('id')
     return render(request, 'usuarios/lista_usuarios.html', {
@@ -284,8 +285,8 @@ def lista_usuarios(request):
 # =====================================================
 # EDITAR USUARIO
 # =====================================================
-#@login_required
-#@rol_requerido(['admin', 'superadmin'])
+@login_required
+@rol_requerido(['admin', 'superadmin'])
 def editar_usuario(request, id):
     usuario = get_object_or_404(Usuario, pk=id)
 
@@ -293,38 +294,40 @@ def editar_usuario(request, id):
 
         first_name = request.POST.get('first_name', '').strip()
         last_name = request.POST.get('last_name', '').strip()
-        username = request.POST.get('username', '').strip()
-        email = request.POST.get('email', '').strip()
+        email = request.POST.get('email', '').strip().lower()
         rol = request.POST.get('rol')
 
         # ================= VALIDACIONES =================
 
+        # Validar nombres
         if not re.match(r'^[A-Za-zÁÉÍÓÚáéíóúÑñ\s]+$', first_name):
-            return redirect(f"{reverse('lista_usuarios')}?error=1&usuario_id={usuario.id}&msg=Nombre inválido")
+            messages.error(request, 'El nombre contiene caracteres inválidos')
+            return redirect('lista_usuarios')
 
         if not re.match(r'^[A-Za-zÁÉÍÓÚáéíóúÑñ\s]+$', last_name):
-            return redirect(f"{reverse('lista_usuarios')}?error=1&usuario_id={usuario.id}&msg=Apellido inválido")
+            messages.error(request, 'El apellido contiene caracteres inválidos')
+            return redirect('lista_usuarios')
 
-        try:
-            validate_email(username)
-            if '.' not in username.split('@')[-1]:
-                raise ValidationError
-        except ValidationError:
-            return redirect(f"{reverse('lista_usuarios')}?error=1&usuario_id={usuario.id}&msg=Usuario inválido")
-
+        # Validar email
         try:
             validate_email(email)
             if '.' not in email.split('@')[-1]:
                 raise ValidationError
         except ValidationError:
-            return redirect(f"{reverse('lista_usuarios')}?error=1&usuario_id={usuario.id}&msg=Correo inválido")
+            messages.error(request, 'Correo electrónico inválido')
+            return redirect('lista_usuarios')
+
+        # Validar que el email no exista en otro usuario
+        if Usuario.objects.filter(email=email).exclude(id=usuario.id).exists():
+            messages.error(request, 'Ya existe otro usuario con este correo electrónico')
+            return redirect('lista_usuarios')
 
         # ================= ACTUALIZAR =================
 
         usuario.first_name = first_name.title()
         usuario.last_name = last_name.title()
-        usuario.username = username.lower()
         usuario.email = email.lower()
+        usuario.username = email.lower()  # Actualizar también username
 
         # ================= ROL =================
         if rol in ['superadmin', 'admin', 'conductor']:
@@ -349,16 +352,16 @@ def editar_usuario(request, id):
 
         if password or password_confirm:
             if password != password_confirm:
-                return redirect(
-                    f"{reverse('lista_usuarios')}?error=1&usuario_id={usuario.id}&msg=Las contraseñas no coinciden"
-                )
+                messages.error(request, 'Las contraseñas no coinciden')
+                return redirect('lista_usuarios')
+            if len(password) < 8:
+                messages.error(request, 'La contraseña debe tener al menos 8 caracteres')
+                return redirect('lista_usuarios')
             usuario.set_password(password)
 
         usuario.save()
-
-        return redirect(
-            f"{reverse('lista_usuarios')}?success=1&msg=Usuario actualizado correctamente"
-        )
+        messages.success(request, f'Usuario {usuario.email} actualizado correctamente')
+        return redirect('lista_usuarios')
 
     return redirect('lista_usuarios')
 
@@ -366,8 +369,8 @@ def editar_usuario(request, id):
 # =====================================================
 # ELIMINAR USUARIO
 # =====================================================
-#@login_required
-#@rol_requerido(['admin', 'superadmin'])
+@login_required
+@rol_requerido(['admin', 'superadmin'])
 def eliminar_usuario(request, id):
     usuario = get_object_or_404(Usuario, pk=id)
     nombre = usuario.get_full_name() or usuario.username
