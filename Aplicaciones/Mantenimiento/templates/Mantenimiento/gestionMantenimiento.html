@@ -1,0 +1,293 @@
+{% extends "plantilla_admin.html" %}
+
+{% block contenido %}
+<br>
+<div class="d-flex justify-content-between align-items-center mb-3">
+    <h3>GESTIÓN DE MANTENIMIENTO</h3>
+    <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#modalNuevoMant">
+        <i class="fas fa-plus"></i> Nuevo Mantenimiento
+    </button>
+</div>
+
+{% if messages %}
+    {% for message in messages %}
+        <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+            {{ message }}
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+    {% endfor %}
+{% endif %}
+
+<div class="card shadow">
+    <div class="card-body">
+        <table class="table table-bordered table-striped table-hover" id="tbl_mantenimiento">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>UNIDAD</th>
+                    <th>TIPO</th>
+                    <th>CONDUCTOR</th>
+                    <th>FECHA ENTRADA</th>
+                    <th>FECHA SALIDA</th>
+                    <th>KM</th>
+                    <th>COSTO</th>
+                    <th>ACCIONES</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for mant in mantenimientos %}
+                <tr>
+                    <td>{{ mant.id }}</td>
+                    <td>
+                        {% if mant.activo %}
+                            {{ mant.activo.placa }}
+                        {% else %}
+                            {{ mant.remolque.nombre }}
+                        {% endif %}
+                    </td>
+                    <td>
+                        {% if mant.tipo == 'preventivo' %}
+                            <span class="badge bg-success">Preventivo</span>
+                        {% else %}
+                            <span class="badge bg-danger">Correctivo</span>
+                        {% endif %}
+                    </td>
+                    <td>{{ mant.conductor|default:'-' }}</td>
+                    <td>{{ mant.fecha_entrada }}</td>
+                    <td>{{ mant.fecha_salida|default:'-' }}</td>
+                    <td>{{ mant.km_odometro|default:'-' }}</td>
+                    <td>{{ mant.costo_total|default:'-' }}</td>
+                    <td>
+                        <a href="/Mantenimiento/detalle/{{ mant.id }}/" class="btn btn-info btn-sm me-2">
+                            <i class="fas fa-eye"></i> Ver
+                        </a>
+                        <a onclick="return confirm('¿Está seguro de eliminar este mantenimiento?')"
+                           href="/Mantenimiento/eliminar/{{ mant.id }}/"
+                           class="btn btn-danger btn-sm">
+                            <i class="fas fa-trash"></i> Eliminar
+                        </a>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        
+    </div>
+</div>
+
+<!-- MODAL NUEVO MANTENIMIENTO -->
+<div class="modal fade" id="modalNuevoMant" tabindex="-1">
+    <div class="modal-dialog modal-xl">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">NUEVO MANTENIMIENTO</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <form action="/Mantenimiento/guardar/" method="POST">
+                {% csrf_token %}
+                <div class="modal-body">
+                    <div class="row">
+
+                        <!-- Tipo de unidad -->
+                        <div class="col-md-12 mb-3">
+                            <label class="form-label"><b>TIPO DE UNIDAD:</b></label>
+                            <select id="tipo_unidad" class="form-select" onchange="toggleUnidad(this.value)">
+                                <option value="">-- Seleccione --</option>
+                                <option value="cabezal">Cabezal</option>
+                                <option value="remolque">Remolque</option>
+                            </select>
+                        </div>
+
+                        <!-- Cabezal -->
+                        <div class="col-md-6 mb-3" id="div_cabezal" style="display:none">
+                            <label class="form-label"><b>CABEZAL:</b></label>
+                            <select name="activo_id" id="sel_cabezal" class="form-select">
+                                <option value="">-- Seleccione --</option>
+                                {% for cab in cabezales %}
+                                <option value="{{ cab.id }}">{{ cab.placa }} - {{ cab.marca.nombre_marca }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+
+                        <!-- Remolque -->
+                        <div class="col-md-6 mb-3" id="div_remolque" style="display:none">
+                            <label class="form-label"><b>REMOLQUE:</b></label>
+                            <select name="remolque_id" id="sel_remolque" class="form-select">
+                                <option value="">-- Seleccione --</option>
+                                {% for rem in remolques %}
+                                <option value="{{ rem.id }}">{{ rem.nombre }} ({{ rem.get_tipo_display }})</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+
+                        <!-- Cabezal de referencia -->
+                        <div class="col-md-6 mb-3" id="div_cabezal_ref" style="display:none">
+                            <label class="form-label"><b>CABEZAL AL QUE ESTABA ENGANCHADO:</b></label>
+                            <select name="cabezal_ref_id" class="form-select">
+                                <option value="">-- Opcional --</option>
+                                {% for cab in cabezales %}
+                                <option value="{{ cab.id }}">{{ cab.placa }} - {{ cab.marca.nombre_marca }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label"><b>CONDUCTOR:</b></label>
+                            <select name="conductor_id" class="form-select">
+                                <option value="">-- Seleccione --</option>
+                                {% for conductor in conductores %}
+                                <option value="{{ conductor.id }}">{{ conductor.nombres_cond }} {{ conductor.apell_cond }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label"><b>TIPO:</b></label>
+                            <select name="tipo" class="form-select" required>
+                                <option value="">-- Seleccione --</option>
+                                <option value="preventivo">Preventivo</option>
+                                <option value="correctivo">Correctivo</option>
+                            </select>
+                        </div>
+
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label"><b>FECHA ENTRADA:</b></label>
+                            <input type="date" name="fecha_entrada" class="form-control" required>
+                        </div>
+
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label"><b>FECHA SALIDA:</b></label>
+                            <input type="date" name="fecha_salida" class="form-control">
+                        </div>
+
+                        <div class="col-md-6 mb-3" id="div_km" style="display:none">
+                            <label class="form-label"><b>KM ODÓMETRO:</b></label>
+                            <input type="number" name="km_odometro" class="form-control">
+                        </div>
+
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label"><b>COSTO TOTAL:</b></label>
+                            <input type="number" name="costo_total" class="form-control" step="0.01">
+                        </div>
+
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label"><b>FECHA DE PAGO:</b></label>
+                            <input type="date" name="fecha_pago" class="form-control">
+                        </div>
+
+                        <div class="col-md-12 mb-3">
+                            <label class="form-label"><b>OBSERVACIONES:</b></label>
+                            <textarea name="observaciones" class="form-control" rows="2"></textarea>
+                        </div>
+
+                        <!-- SECCIÓN DE TRABAJOS -->
+                        <div class="col-md-12 mt-3">
+                            <hr>
+                            <div class="d-flex justify-content-between align-items-center mb-2">
+                                <h6><b>TRABAJOS REALIZADOS</b></h6>
+                                <button type="button" class="btn btn-success btn-sm" onclick="agregarTrabajo()">
+                                    <i class="fas fa-plus"></i> Agregar Trabajo
+                                </button>
+                            </div>
+                            <table class="table table-bordered table-sm" id="tbl_trabajos_form">
+                                <thead class="table-light">
+                                    <tr>
+                                        <th>TRABAJO</th>
+                                        <th>OBSERVACIÓN</th>
+                                        <th></th>
+                                    </tr>
+                                </thead>
+                                <tbody id="tbody_trabajos">
+                                    <!-- filas dinámicas -->
+                                </tbody>
+                            </table>
+                        </div>
+
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="submit" class="btn btn-primary">Guardar</button>
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script>
+// Lista de trabajos disponibles desde Django
+const trabajosDisponibles = [
+    {% for t in tipos_trabajo %}
+    { id: {{ t.id }}, nombre: "{{ t.nombre }}", control: "{{ t.tipo_control }}" },
+    {% endfor %}
+];
+
+let contadorTrabajo = 0;
+
+function agregarTrabajo() {
+    contadorTrabajo++;
+    const tbody = document.getElementById('tbody_trabajos');
+    const fila = document.createElement('tr');
+    fila.id = 'fila_trabajo_' + contadorTrabajo;
+
+    let opcionesTrabajos = '<option value="">-- Seleccione --</option>';
+    trabajosDisponibles.forEach(t => {
+        opcionesTrabajos += `<option value="${t.id}">${t.nombre}</option>`;
+    });
+
+    fila.innerHTML = `
+        <td>
+            <select name="trabajo_id[]" class="form-select form-select-sm" required>
+                ${opcionesTrabajos}
+            </select>
+        </td>
+        <td>
+            <input type="text" name="trabajo_observacion[]" class="form-control form-control-sm">
+        </td>
+        <td>
+            <button type="button" class="btn btn-danger btn-sm" onclick="eliminarFila('fila_trabajo_${contadorTrabajo}')">
+                <i class="fas fa-trash"></i>
+            </button>
+        </td>
+    `;
+    tbody.appendChild(fila);
+}
+
+function eliminarFila(id) {
+    document.getElementById(id).remove();
+}
+
+function toggleUnidad(tipo) {
+    document.getElementById('div_cabezal').style.display = 'none';
+    document.getElementById('div_remolque').style.display = 'none';
+    document.getElementById('div_cabezal_ref').style.display = 'none';
+    document.getElementById('div_km').style.display = 'none';
+
+    if (tipo === 'cabezal') {
+        document.getElementById('div_cabezal').style.display = 'block';
+        document.getElementById('div_km').style.display = 'block';
+    } else if (tipo === 'remolque') {
+        document.getElementById('div_remolque').style.display = 'block';
+        document.getElementById('div_cabezal_ref').style.display = 'block';
+    }
+}
+</script>
+
+{% endblock %}
+{% block extra_js %}
+
+        <script>
+                    let table = new DataTable('#tbl_mantenimiento', {
+                        language: {
+                            url: '//cdn.datatables.net/plug-ins/1.13.5/i18n/es-ES.json'
+                        },
+                        dom: 'Bfrtip',
+                        layout: {
+                            topStart: {
+                                buttons: ['copyHtml5', 'excelHtml5', 'csvHtml5', 'pdfHtml5', 'print']
+                            }
+                        }
+                    });
+        </script>
+
+{% endblock %}

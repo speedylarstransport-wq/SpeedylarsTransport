@@ -1,0 +1,222 @@
+{% extends "plantilla_admin.html" %}
+
+{% block contenido %}
+<br>
+<div class="d-flex justify-content-between align-items-center mb-3">
+    <h3>GESTIÓN DE REMOLQUES</h3>
+    <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#modalNuevoRemolque">
+        <i class="fas fa-plus"></i> Nuevo Remolque
+    </button>
+</div>
+
+{% if messages %}
+    {% for message in messages %}
+        <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+            {{ message }}
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+    {% endfor %}
+{% endif %}
+
+<div class="card shadow">
+    <div class="card-body">
+        <table class="table table-bordered table-striped table-hover" id="tbl_remolques">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>NOMBRE</th>
+                    <th>TIPO</th>
+                    <th>MARCA</th>
+                    <th>AÑO</th>
+                    <th>ESTADO</th>
+                    <th>OBSERVACIONES</th>
+                    <th>ACCIONES</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for rem in remolques %}
+                <tr>
+                    <td>{{ rem.id }}</td>
+                    <td>{{ rem.nombre }}</td>
+                    <td>{{ rem.get_tipo_display }}</td>
+                    <td>{{ rem.marca.nombre_marca|default:'-' }}</td>
+                    <td>{{ rem.anio|default:'-' }}</td>
+                    <td>
+                        {% if rem.estado == 'activo' %}
+                            <span class="badge bg-success">Activo</span>
+                        {% elif rem.estado == 'mantenimiento' %}
+                            <span class="badge bg-warning">En mantenimiento</span>
+                        {% else %}
+                            <span class="badge bg-danger">Inactivo</span>
+                        {% endif %}
+                    </td>
+                    <td>{{ rem.observaciones|default:'-' }}</td>
+                    <td>
+                        <button class="btn btn-warning btn-sm me-2"
+                            data-id="{{ rem.id }}"
+                            data-nombre="{{ rem.nombre }}"
+                            data-tipo="{{ rem.tipo }}"
+                            data-marca="{{ rem.marca.id|default:'' }}"
+                            data-anio="{{ rem.anio|default:'' }}"
+                            data-estado="{{ rem.estado }}"
+                            data-observaciones="{{ rem.observaciones|default:'' }}"
+                            onclick="abrirEditar(this)">
+                            <i class="fas fa-edit"></i> Editar
+                        </button>
+                        <a onclick="return confirm('¿Está seguro de eliminar este remolque?')"
+                           href="/Remolque/eliminar/{{ rem.id }}/"
+                           class="btn btn-danger btn-sm">
+                            <i class="fas fa-trash"></i> Eliminar
+                        </a>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        <script>
+            let table = new DataTable('#tbl_remolques', {
+                language: {
+                    url: '//cdn.datatables.net/plug-ins/1.13.5/i18n/es-ES.json'
+                },
+                dom: 'Bfrtip',
+                layout: {
+                    topStart: {
+                        buttons: ['copyHtml5', 'excelHtml5', 'csvHtml5', 'pdfHtml5', 'print']
+                    }
+                }
+            });
+        </script>
+    </div>
+</div>
+
+<!-- MODAL NUEVO REMOLQUE -->
+<div class="modal fade" id="modalNuevoRemolque" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">NUEVO REMOLQUE</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <form action="/Remolque/guardar/" method="POST">
+                {% csrf_token %}
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <label class="form-label"><b>NOMBRE:</b></label>
+                        <input type="text" name="nombre" class="form-control" required>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label"><b>TIPO:</b></label>
+                        <select name="tipo" class="form-select" required>
+                            <option value="">-- Seleccione --</option>
+                            <option value="furgon">Furgón</option>
+                            <option value="plataforma">Plataforma</option>
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label"><b>MARCA:</b></label>
+                        <select name="marca_id" class="form-select">
+                            <option value="">-- Sin marca --</option>
+                            {% for marca in marcas %}
+                            <option value="{{ marca.id }}">{{ marca.nombre_marca }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label"><b>AÑO:</b></label>
+                        <input type="number" name="anio" class="form-control">
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label"><b>ESTADO:</b></label>
+                        <select name="estado" class="form-select" required>
+                            <option value="activo">Activo</option>
+                            <option value="mantenimiento">En mantenimiento</option>
+                            <option value="inactivo">Inactivo</option>
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label"><b>OBSERVACIONES:</b></label>
+                        <textarea name="observaciones" class="form-control" rows="2"></textarea>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="submit" class="btn btn-primary">Guardar</button>
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- MODAL EDITAR REMOLQUE -->
+<div class="modal fade" id="modalEditarRemolque" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">EDITAR REMOLQUE</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <form action="/Remolque/procesarEdicion/" method="POST">
+                {% csrf_token %}
+                <input type="hidden" name="id_remolque" id="edit_id_remolque">
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <label class="form-label"><b>NOMBRE:</b></label>
+                        <input type="text" name="nombre" id="edit_nombre" class="form-control" required>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label"><b>TIPO:</b></label>
+                        <select name="tipo" id="edit_tipo" class="form-select" required>
+                            <option value="">-- Seleccione --</option>
+                            <option value="furgon">Furgón</option>
+                            <option value="plataforma">Plataforma</option>
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label"><b>MARCA:</b></label>
+                        <select name="marca_id" id="edit_marca" class="form-select">
+                            <option value="">-- Sin marca --</option>
+                            {% for marca in marcas %}
+                            <option value="{{ marca.id }}">{{ marca.nombre_marca }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label"><b>AÑO:</b></label>
+                        <input type="number" name="anio" id="edit_anio" class="form-control">
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label"><b>ESTADO:</b></label>
+                        <select name="estado" id="edit_estado" class="form-select" required>
+                            <option value="activo">Activo</option>
+                            <option value="mantenimiento">En mantenimiento</option>
+                            <option value="inactivo">Inactivo</option>
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label"><b>OBSERVACIONES:</b></label>
+                        <textarea name="observaciones" id="edit_observaciones" class="form-control" rows="2"></textarea>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="submit" class="btn btn-primary">Actualizar</button>
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script>
+function abrirEditar(btn) {
+    document.getElementById('edit_id_remolque').value = btn.dataset.id;
+    document.getElementById('edit_nombre').value = btn.dataset.nombre;
+    document.getElementById('edit_tipo').value = btn.dataset.tipo;
+    document.getElementById('edit_marca').value = btn.dataset.marca;
+    document.getElementById('edit_anio').value = btn.dataset.anio;
+    document.getElementById('edit_estado').value = btn.dataset.estado;
+    document.getElementById('edit_observaciones').value = btn.dataset.observaciones;
+    new bootstrap.Modal(document.getElementById('modalEditarRemolque')).show();
+}
+</script>
+
+{% endblock %}

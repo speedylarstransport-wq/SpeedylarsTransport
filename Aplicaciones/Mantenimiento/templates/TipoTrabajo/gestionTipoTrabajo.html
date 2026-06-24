@@ -1,0 +1,190 @@
+{% extends "plantilla_admin.html" %}
+
+{% block contenido %}
+<br>
+<div class="d-flex justify-content-between align-items-center mb-3">
+    <h3>GESTIÓN DE TIPOS DE TRABAJO</h3>
+    <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#modalNuevoTrabajo">
+        <i class="fas fa-plus"></i> Nuevo Tipo de Trabajo
+    </button>
+</div>
+
+{% if messages %}
+    {% for message in messages %}
+        <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+            {{ message }}
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+    {% endfor %}
+{% endif %}
+
+<div class="card shadow">
+    <div class="card-body">
+        <table class="table table-bordered table-striped table-hover" id="tbl_trabajos">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>NOMBRE</th>
+                    <th>APLICA A</th>
+                    <th>TIPO CONTROL</th>
+                    <th>DESCRIPCIÓN</th>
+                    <th>ACCIONES</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for trabajo in trabajos %}
+                <tr>
+                    <td>{{ trabajo.id }}</td>
+                    <td>{{ trabajo.nombre }}</td>
+                    <td>{{ trabajo.get_aplica_a_display }}</td>
+                    <td>
+                        {% if trabajo.tipo_control == 'km' %}
+                            <span class="badge bg-primary">Por km</span>
+                        {% else %}
+                            <span class="badge bg-secondary">Libre</span>
+                        {% endif %}
+                    </td>
+                    <td>{{ trabajo.descripcion|default:'-' }}</td>
+                    <td>
+                        <button class="btn btn-warning btn-sm me-2"
+                            data-id="{{ trabajo.id }}"
+                            data-nombre="{{ trabajo.nombre }}"
+                            data-descripcion="{{ trabajo.descripcion|default:'' }}"
+                            data-aplica="{{ trabajo.aplica_a }}"
+                            data-control="{{ trabajo.tipo_control }}"
+                            onclick="abrirEditar(this)">
+                            <i class="fas fa-edit"></i> Editar
+                        </button>
+                        <a onclick="return confirm('¿Está seguro de eliminar este tipo de trabajo?')"
+                           href="/TipoTrabajo/eliminar/{{ trabajo.id }}/"
+                           class="btn btn-danger btn-sm">
+                            <i class="fas fa-trash"></i> Eliminar
+                        </a>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        <script>
+            let table = new DataTable('#tbl_trabajos', {
+                language: {
+                    url: '//cdn.datatables.net/plug-ins/1.13.5/i18n/es-ES.json'
+                },
+                dom: 'Bfrtip',
+                layout: {
+                    topStart: {
+                        buttons: ['copyHtml5', 'excelHtml5', 'csvHtml5', 'pdfHtml5', 'print']
+                    }
+                }
+            });
+        </script>
+    </div>
+</div>
+
+<!-- MODAL NUEVO TRABAJO -->
+<div class="modal fade" id="modalNuevoTrabajo" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">NUEVO TIPO DE TRABAJO</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <form action="/TipoTrabajo/guardar/" method="POST">
+                {% csrf_token %}
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <label class="form-label"><b>NOMBRE:</b></label>
+                        <input type="text" name="nombre" class="form-control" required>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label"><b>APLICA A:</b></label>
+                        <select name="aplica_a" class="form-select" required>
+                            <option value="">-- Seleccione --</option>
+                            <option value="cabezal">Cabezal</option>
+                            <option value="furgon">Furgón</option>
+                            <option value="plataforma">Plataforma</option>
+                            <option value="ambos">Todos</option>
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label"><b>TIPO DE CONTROL:</b></label>
+                        <select name="tipo_control" class="form-select" required>
+                            <option value="">-- Seleccione --</option>
+                            <option value="km">Por kilometraje</option>
+                            <option value="libre">Libre</option>
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label"><b>DESCRIPCIÓN:</b></label>
+                        <textarea name="descripcion" class="form-control" rows="2"></textarea>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="submit" class="btn btn-primary">Guardar</button>
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- MODAL EDITAR TRABAJO -->
+<div class="modal fade" id="modalEditarTrabajo" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">EDITAR TIPO DE TRABAJO</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <form action="/TipoTrabajo/procesarEdicion/" method="POST">
+                {% csrf_token %}
+                <input type="hidden" name="id_trabajo" id="edit_id_trabajo">
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <label class="form-label"><b>NOMBRE:</b></label>
+                        <input type="text" name="nombre" id="edit_nombre" class="form-control" required>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label"><b>APLICA A:</b></label>
+                        <select name="aplica_a" id="edit_aplica" class="form-select" required>
+                            <option value="">-- Seleccione --</option>
+                            <option value="cabezal">Cabezal</option>
+                            <option value="furgon">Furgón</option>
+                            <option value="plataforma">Plataforma</option>
+                            <option value="ambos">Todos</option>
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label"><b>TIPO DE CONTROL:</b></label>
+                        <select name="tipo_control" id="edit_control" class="form-select" required>
+                            <option value="">-- Seleccione --</option>
+                            <option value="km">Por kilometraje</option>
+                            <option value="libre">Libre</option>
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label"><b>DESCRIPCIÓN:</b></label>
+                        <textarea name="descripcion" id="edit_descripcion" class="form-control" rows="2"></textarea>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="submit" class="btn btn-primary">Actualizar</button>
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script>
+function abrirEditar(btn) {
+    document.getElementById('edit_id_trabajo').value = btn.dataset.id;
+    document.getElementById('edit_nombre').value = btn.dataset.nombre;
+    document.getElementById('edit_aplica').value = btn.dataset.aplica;
+    document.getElementById('edit_control').value = btn.dataset.control;
+    document.getElementById('edit_descripcion').value = btn.dataset.descripcion;
+    new bootstrap.Modal(document.getElementById('modalEditarTrabajo')).show();
+}
+</script>
+
+{% endblock %}

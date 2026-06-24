@@ -1,0 +1,128 @@
+{% extends "plantilla_admin.html" %}
+
+{% block contenido %}
+<br>
+<div class="d-flex justify-content-between align-items-center mb-3">
+    <h3>GESTIÓN DE MARCAS</h3>
+    <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#modalNuevaMarca">
+        <i class="fas fa-plus"></i> Nueva Marca
+    </button>
+</div>
+
+{% if messages %}
+    {% for message in messages %}
+        <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+            {{ message }}
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+    {% endfor %}
+{% endif %}
+
+<div class="card shadow">
+    <div class="card-body">
+        <table class="table table-bordered table-striped table-hover" id="tbl_marcas">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>MARCA</th>
+                    <th>ACCIONES</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for marca in marcas %}
+                <tr>
+                    <td>{{ marca.id }}</td>
+                    <td>{{ marca.nombre_marca }}</td>
+                    <td>
+                        <button class="btn btn-warning btn-sm me-2"
+                            data-id="{{ marca.id }}"
+                            data-nombre="{{ marca.nombre_marca }}"
+                            onclick="abrirEditar(this)">
+                            <i class="fas fa-edit"></i> Editar
+                        </button>
+                        <a onclick="return confirm('¿Está seguro de eliminar esta marca?')"
+                           href="/Marca/eliminar/{{ marca.id }}/"
+                           class="btn btn-danger btn-sm">
+                            <i class="fas fa-trash"></i> Eliminar
+                        </a>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        <script>
+            let table = new DataTable('#tbl_marcas', {
+                language: {
+                    url: '//cdn.datatables.net/plug-ins/1.13.5/i18n/es-ES.json'
+                },
+                dom: 'Bfrtip',
+                layout: {
+                    topStart: {
+                        buttons: ['copyHtml5', 'excelHtml5', 'csvHtml5', 'pdfHtml5', 'print']
+                    }
+                }
+            });
+        </script>
+    </div>
+</div>
+
+<!-- MODAL NUEVA MARCA -->
+<div class="modal fade" id="modalNuevaMarca" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">NUEVA MARCA</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <form action="/Marca/guardar/" method="POST">
+                {% csrf_token %}
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <label class="form-label"><b>NOMBRE DE LA MARCA:</b></label>
+                        <input type="text" name="nombre_marca" class="form-control" required>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="submit" class="btn btn-primary">Guardar</button>
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- MODAL EDITAR MARCA -->
+<div class="modal fade" id="modalEditarMarca" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">EDITAR MARCA</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <form action="/Marca/procesarEdicion/" method="POST">
+                {% csrf_token %}
+                <input type="hidden" name="id_marca" id="edit_id_marca">
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <label class="form-label"><b>NOMBRE DE LA MARCA:</b></label>
+                        <input type="text" name="nombre_marca" id="edit_nombre_marca" class="form-control" required>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="submit" class="btn btn-primary">Actualizar</button>
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script>
+function abrirEditar(btn) {
+    document.getElementById('edit_id_marca').value = btn.dataset.id;
+    document.getElementById('edit_nombre_marca').value = btn.dataset.nombre;
+    new bootstrap.Modal(document.getElementById('modalEditarMarca')).show();
+}
+</script>
+
+{% endblock %}

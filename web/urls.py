@@ -21,5 +21,6 @@ from Aplicaciones.PaginaW import views
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('',include('Aplicaciones.PaginaW.urls')),
+    path('',include('Aplicaciones.Mantenimiento.urls')),
     path('<path:url>', views.error_404),
 ]

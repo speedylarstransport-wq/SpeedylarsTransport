@@ -1,0 +1,269 @@
+{% extends "plantilla_admin.html" %}
+
+{% block contenido %}
+<br>
+<div class="d-flex justify-content-between align-items-center mb-3">
+    <h3>GESTIÓN DE CABEZALES</h3>
+    <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#modalNuevoCabezal">
+        <i class="fas fa-plus"></i> Nuevo Cabezal
+    </button>
+</div>
+
+{% if messages %}
+    {% for message in messages %}
+        <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+            {{ message }}
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+    {% endfor %}
+{% endif %}
+
+<div class="card shadow">
+    <div class="card-body">
+        <table class="table table-bordered table-striped table-hover" id="tbl_cabezales">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>PLACA</th>
+                    <th>MARCA</th>
+                    <th>MODELO</th>
+                    <th>AÑO</th>
+                    <th>N° MOTOR</th>
+                    <th>N° CHASIS</th>
+                    <th>N° DISCO</th>
+                    <th>COLOR</th>
+                    <th>KM ACTUAL</th>
+                    <th>ESTADO</th>
+                    <th>ACCIONES</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for cab in cabezales %}
+                <tr>
+                    <td>{{ cab.id }}</td>
+                    <td>{{ cab.placa }}</td>
+                    <td>{{ cab.marca.nombre_marca }}</td>
+                    <td>{{ cab.modelo }}</td>
+                    <td>{{ cab.anio }}</td>
+                    <td>{{ cab.num_motor }}</td>
+                    <td>{{ cab.num_chasis }}</td>
+                    <td>{{ cab.num_disco }}</td>
+                    <td>{{ cab.color }}</td>
+                    <td>{{ cab.km_odometro_actual }}</td>
+                    <td>
+                        {% if cab.estado == 'activo' %}
+                            <span class="badge bg-success">Activo</span>
+                        {% elif cab.estado == 'mantenimiento' %}
+                            <span class="badge bg-warning">En mantenimiento</span>
+                        {% else %}
+                            <span class="badge bg-danger">Inactivo</span>
+                        {% endif %}
+                    </td>
+                    <td>
+                        <button class="btn btn-warning btn-sm me-2"
+                            data-id="{{ cab.id }}"
+                            data-placa="{{ cab.placa }}"
+                            data-marca="{{ cab.marca.id }}"
+                            data-modelo="{{ cab.modelo }}"
+                            data-anio="{{ cab.anio }}"
+                            data-motor="{{ cab.num_motor }}"
+                            data-chasis="{{ cab.num_chasis }}"
+                            data-disco="{{ cab.num_disco }}"
+                            data-color="{{ cab.color }}"
+                            data-estado="{{ cab.estado }}"
+                            data-caducidad="{{ cab.fecha_caducidad|date:'Y-m-d' }}"
+                            data-km="{{ cab.km_manual }}"
+                            onclick="abrirEditar(this)">
+                            <i class="fas fa-edit"></i> Editar
+                        </button>
+                        <a onclick="return confirm('¿Está seguro de eliminar este cabezal?')"
+                           href="/Cabezal/eliminar/{{ cab.id }}/"
+                           class="btn btn-danger btn-sm">
+                            <i class="fas fa-trash"></i> Eliminar
+                        </a>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        <script>
+            let table = new DataTable('#tbl_cabezales', {
+                language: {
+                    url: '//cdn.datatables.net/plug-ins/1.13.5/i18n/es-ES.json'
+                },
+                dom: 'Bfrtip',
+                layout: {
+                    topStart: {
+                        buttons: ['copyHtml5', 'excelHtml5', 'csvHtml5', 'pdfHtml5', 'print']
+                    }
+                }
+            });
+        </script>
+    </div>
+</div>
+
+<!-- MODAL NUEVO CABEZAL -->
+<div class="modal fade" id="modalNuevoCabezal" tabindex="-1">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">NUEVO CABEZAL</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <form action="/Cabezal/guardar/" method="POST">
+                {% csrf_token %}
+                <div class="modal-body">
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label"><b>PLACA:</b></label>
+                            <input type="text" name="placa" class="form-control" required>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label"><b>MARCA:</b></label>
+                            <select name="marca_id" class="form-select" required>
+                                <option value="">-- Seleccione --</option>
+                                {% for marca in marcas %}
+                                <option value="{{ marca.id }}">{{ marca.nombre_marca }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label"><b>MODELO:</b></label>
+                            <input type="text" name="modelo" class="form-control">
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label"><b>AÑO:</b></label>
+                            <input type="number" name="anio" class="form-control" required>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label"><b>NÚMERO DE MOTOR:</b></label>
+                            <input type="text" name="num_motor" class="form-control">
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label"><b>NÚMERO DE CHASIS:</b></label>
+                            <input type="text" name="num_chasis" class="form-control">
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label"><b>NÚMERO DE DISCO:</b></label>
+                            <input type="text" name="num_disco" class="form-control">
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label"><b>COLOR:</b></label>
+                            <input type="text" name="color" class="form-control">
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label"><b>ESTADO:</b></label>
+                            <select name="estado" class="form-select" required>
+                                <option value="activo">Activo</option>
+                                <option value="mantenimiento">En mantenimiento</option>
+                                <option value="inactivo">Inactivo</option>
+                            </select>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label"><b>FECHA DE CADUCIDAD:</b></label>
+                            <input type="date" name="fecha_caducidad" class="form-control">
+                        </div>
+                        
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="submit" class="btn btn-primary">Guardar</button>
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- MODAL EDITAR CABEZAL -->
+<div class="modal fade" id="modalEditarCabezal" tabindex="-1">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">EDITAR CABEZAL</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <form action="/Cabezal/procesarEdicion/" method="POST">
+                {% csrf_token %}
+                <input type="hidden" name="id_cabezal" id="edit_id_cabezal">
+                <div class="modal-body">
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label"><b>PLACA:</b></label>
+                            <input type="text" name="placa" id="edit_placa" class="form-control" required>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label"><b>MARCA:</b></label>
+                            <select name="marca_id" id="edit_marca" class="form-select" required>
+                                <option value="">-- Seleccione --</option>
+                                {% for marca in marcas %}
+                                <option value="{{ marca.id }}">{{ marca.nombre_marca }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label"><b>MODELO:</b></label>
+                            <input type="text" name="modelo" id="edit_modelo" class="form-control">
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label"><b>AÑO:</b></label>
+                            <input type="number" name="anio" id="edit_anio" class="form-control" required>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label"><b>NÚMERO DE MOTOR:</b></label>
+                            <input type="text" name="num_motor" id="edit_motor" class="form-control">
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label"><b>NÚMERO DE CHASIS:</b></label>
+                            <input type="text" name="num_chasis" id="edit_chasis" class="form-control">
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label"><b>NÚMERO DE DISCO:</b></label>
+                            <input type="text" name="num_disco" id="edit_disco" class="form-control">
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label"><b>COLOR:</b></label>
+                            <input type="text" name="color" id="edit_color" class="form-control">
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label"><b>ESTADO:</b></label>
+                            <select name="estado" id="edit_estado" class="form-select" required>
+                                <option value="activo">Activo</option>
+                                <option value="mantenimiento">En mantenimiento</option>
+                                <option value="inactivo">Inactivo</option>
+                            </select>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label"><b>FECHA DE CADUCIDAD:</b></label>
+                            <input type="date" name="fecha_caducidad" id="edit_caducidad" class="form-control">
+                        </div>
+                        
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="submit" class="btn btn-primary">Actualizar</button>
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script>
+function abrirEditar(btn) {
+    document.getElementById('edit_id_cabezal').value = btn.dataset.id;
+    document.getElementById('edit_placa').value = btn.dataset.placa;
+    document.getElementById('edit_marca').value = btn.dataset.marca;
+    document.getElementById('edit_modelo').value = btn.dataset.modelo;
+    document.getElementById('edit_anio').value = btn.dataset.anio;
+    document.getElementById('edit_motor').value = btn.dataset.motor;
+    document.getElementById('edit_chasis').value = btn.dataset.chasis;
+    document.getElementById('edit_disco').value = btn.dataset.disco;
+    document.getElementById('edit_color').value = btn.dataset.color;
+    document.getElementById('edit_estado').value = btn.dataset.estado;
+    document.getElementById('edit_caducidad').value = btn.dataset.caducidad;
+    new bootstrap.Modal(document.getElementById('modalEditarCabezal')).show();
+}
+</script>
+
+{% endblock %}

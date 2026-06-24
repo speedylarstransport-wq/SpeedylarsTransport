@@ -1,0 +1,172 @@
+{% extends "plantilla_admin.html" %}
+
+{% block contenido %}
+<br>
+<div class="d-flex justify-content-between align-items-center mb-3">
+    <h3>CONFIGURACIÓN DE MANTENIMIENTO</h3>
+    <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#modalNuevaConfig">
+        <i class="fas fa-plus"></i> Nueva Configuración
+    </button>
+</div>
+
+{% if messages %}
+    {% for message in messages %}
+        <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+            {{ message }}
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+    {% endfor %}
+{% endif %}
+
+<div class="card shadow">
+    <div class="card-body">
+        <table class="table table-bordered table-striped table-hover" id="tbl_config">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>MARCA</th>
+                    <th>TRABAJO</th>
+                    <th>CADA (KM)</th>
+                    <th>ACCIONES</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for config in configuraciones %}
+                <tr>
+                    <td>{{ config.id }}</td>
+                    <td>{{ config.marca.nombre_marca }}</td>
+                    <td>{{ config.trabajo.nombre }}</td>
+                    <td>{{ config.km_intervalo }}</td>
+                    <td>
+                        <button class="btn btn-warning btn-sm me-2"
+                            data-id="{{ config.id }}"
+                            data-marca="{{ config.marca.id }}"
+                            data-trabajo="{{ config.trabajo.id }}"
+                            data-km="{{ config.km_intervalo }}"
+                            onclick="abrirEditar(this)">
+                            <i class="fas fa-edit"></i> Editar
+                        </button>
+                        <a onclick="return confirm('¿Está seguro de eliminar esta configuración?')"
+                           href="/ConfiguracionMan/eliminar/{{ config.id }}/"
+                           class="btn btn-danger btn-sm">
+                            <i class="fas fa-trash"></i> Eliminar
+                        </a>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        <script>
+            let table = new DataTable('#tbl_config', {
+                language: {
+                    url: '//cdn.datatables.net/plug-ins/1.13.5/i18n/es-ES.json'
+                },
+                dom: 'Bfrtip',
+                layout: {
+                    topStart: {
+                        buttons: ['copyHtml5', 'excelHtml5', 'csvHtml5', 'pdfHtml5', 'print']
+                    }
+                }
+            });
+        </script>
+    </div>
+</div>
+
+<!-- MODAL NUEVA CONFIGURACION -->
+<div class="modal fade" id="modalNuevaConfig" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">NUEVA CONFIGURACIÓN</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <form action="/ConfiguracionMan/guardar/" method="POST">
+                {% csrf_token %}
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <label class="form-label"><b>MARCA:</b></label>
+                        <select name="marca_id" class="form-select" required>
+                            <option value="">-- Seleccione --</option>
+                            {% for marca in marcas %}
+                            <option value="{{ marca.id }}">{{ marca.nombre_marca }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label"><b>TRABAJO:</b></label>
+                        <select name="trabajo_id" class="form-select" required>
+                            <option value="">-- Seleccione --</option>
+                            {% for trabajo in trabajos %}
+                            <option value="{{ trabajo.id }}">{{ trabajo.nombre }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label"><b>INTERVALO (KM):</b></label>
+                        <input type="number" name="km_intervalo" class="form-control" required>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="submit" class="btn btn-primary">Guardar</button>
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- MODAL EDITAR CONFIGURACION -->
+<div class="modal fade" id="modalEditarConfig" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">EDITAR CONFIGURACIÓN</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <form action="/ConfiguracionMan/procesarEdicion/" method="POST">
+                {% csrf_token %}
+                <input type="hidden" name="id_config" id="edit_id_config">
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <label class="form-label"><b>MARCA:</b></label>
+                        <select name="marca_id" id="edit_marca" class="form-select" required>
+                            <option value="">-- Seleccione --</option>
+                            {% for marca in marcas %}
+                            <option value="{{ marca.id }}">{{ marca.nombre_marca }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label"><b>TRABAJO:</b></label>
+                        <select name="trabajo_id" id="edit_trabajo" class="form-select" required>
+                            <option value="">-- Seleccione --</option>
+                            {% for trabajo in trabajos %}
+                            <option value="{{ trabajo.id }}">{{ trabajo.nombre }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label"><b>INTERVALO (KM):</b></label>
+                        <input type="number" name="km_intervalo" id="edit_km" class="form-control" required>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="submit" class="btn btn-primary">Actualizar</button>
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script>
+function abrirEditar(btn) {
+    document.getElementById('edit_id_config').value = btn.dataset.id;
+    document.getElementById('edit_marca').value = btn.dataset.marca;
+    document.getElementById('edit_trabajo').value = btn.dataset.trabajo;
+    document.getElementById('edit_km').value = btn.dataset.km;
+    new bootstrap.Modal(document.getElementById('modalEditarConfig')).show();
+}
+</script>
+
+{% endblock %}

@@ -1,0 +1,128 @@
+{% extends "plantilla_admin.html" %}
+
+{% block contenido %}
+<br>
+<div class="d-flex justify-content-between align-items-center mb-3">
+    <h3>CARGA DE COMBUSTIBLE</h3>
+    <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#modalNuevaCarga">
+        <i class="fas fa-plus"></i> Nueva Carga
+    </button>
+</div>
+
+{% if messages %}
+    {% for message in messages %}
+        <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+            {{ message }}
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+    {% endfor %}
+{% endif %}
+
+<div class="card shadow">
+    <div class="card-body">
+        <table class="table table-bordered table-striped table-hover" id="tbl_combustible">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>CABEZAL</th>
+                    <th>FECHA</th>
+                    <th>KM ODÓMETRO</th>
+                    <th>LITROS</th>
+                    <th>COSTO TOTAL</th>
+                    <th>REGISTRADO POR</th>
+                    <th>OBSERVACIONES</th>
+                    <th>ACCIONES</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for carga in cargas %}
+                <tr>
+                    <td>{{ carga.id }}</td>
+                    <td>{{ carga.activo.placa }} - {{ carga.activo.marca.nombre_marca }}</td>
+                    <td>{{ carga.fecha }}</td>
+                    <td>{{ carga.km_odometro }}</td>
+                    <td>{{ carga.litros }}</td>
+                    <td>${{ carga.costo_total }}</td>
+                    <td>{{ carga.registrado_por.username }}</td>
+                    <td>{{ carga.observaciones|default:'-' }}</td>
+                    <td>
+                        <a onclick="return confirm('¿Está seguro de eliminar este registro?')"
+                           href="/Combustible/eliminar/{{ carga.id }}/"
+                           class="btn btn-danger btn-sm">
+                            <i class="fas fa-trash"></i> Eliminar
+                        </a>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<!-- MODAL NUEVA CARGA -->
+<div class="modal fade" id="modalNuevaCarga" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">NUEVA CARGA DE COMBUSTIBLE</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <form action="/Combustible/guardar/" method="POST">
+                {% csrf_token %}
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <label class="form-label"><b>CABEZAL:</b></label>
+                        <select name="activo_id" class="form-select" required>
+                            <option value="">-- Seleccione --</option>
+                            {% for cab in cabezales %}
+                            <option value="{{ cab.id }}">{{ cab.placa }} - {{ cab.marca.nombre_marca }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label"><b>FECHA:</b></label>
+                        <input type="date" name="fecha" class="form-control" required>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label"><b>KM ODÓMETRO:</b></label>
+                        <input type="number" name="km_odometro" class="form-control" required>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label"><b>LITROS:</b></label>
+                        <input type="number" name="litros" class="form-control" step="0.01" required>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label"><b>COSTO TOTAL:</b></label>
+                        <input type="number" name="costo_total" class="form-control" step="0.01" required>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label"><b>OBSERVACIONES:</b></label>
+                        <textarea name="observaciones" class="form-control" rows="2"></textarea>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="submit" class="btn btn-primary">Guardar</button>
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    new DataTable('#tbl_combustible', {
+        language: {
+            url: '//cdn.datatables.net/plug-ins/1.13.5/i18n/es-ES.json'
+        },
+        dom: 'Bfrtip',
+        layout: {
+            topStart: {
+                buttons: ['copyHtml5', 'excelHtml5', 'csvHtml5', 'pdfHtml5', 'print']
+            }
+        }
+    });
+</script>
+{% endblock %}

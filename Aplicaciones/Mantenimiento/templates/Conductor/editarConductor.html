@@ -1,0 +1,56 @@
+{% extends "plantilla_admin.html" %}
+
+{% block contenido %}
+<div class="container">
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <div class="card shadow">
+                <div class="card-body">
+                    <h3 class="text-center mb-4">EDITAR CONDUCTOR</h3>
+                    <form action="/mantenimiento/conductores/procesar-edicion/" method="POST">
+                        {% csrf_token %}
+                        <input type="hidden" name="id_cond" value="{{ conductor.id_cond }}">
+
+                        <div class="mb-3">
+                            <label class="form-label"><b>NOMBRES:</b></label>
+                            <input type="text" name="nombres_cond" class="form-control" value="{{ conductor.nombres_cond }}" required>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label"><b>APELLIDOS:</b></label>
+                            <input type="text" name="apell_cond" class="form-control" value="{{ conductor.apell_cond }}" required>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label"><b>CÉDULA:</b></label>
+                            <input type="text" name="cedula_cond" class="form-control" value="{{ conductor.cedula_cond }}" required>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label"><b>TIPO DE LICENCIA:</b></label>
+                            <select name="tipolicen_cond" class="form-select" required>
+                                <option value="">-- Seleccione --</option>
+                                <option value="C" {% if conductor.tipolicen_cond == 'C' %}selected{% endif %}>C</option>
+                                <option value="D" {% if conductor.tipolicen_cond == 'D' %}selected{% endif %}>D</option>
+                                <option value="E" {% if conductor.tipolicen_cond == 'E' %}selected{% endif %}>E</option>
+                                <option value="F" {% if conductor.tipolicen_cond == 'F' %}selected{% endif %}>F</option>
+                            </select>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label"><b>TELÉFONO:</b></label>
+                            <input type="text" name="telfno_cond" class="form-control" value="{{ conductor.telfno_cond }}">
+                        </div>
+
+                        <div class="d-flex justify-content-center gap-2 mt-4">
+                            <button type="submit" class="btn btn-primary">Actualizar</button>
+                            <a href="/mantenimiento/conductores/" class="btn btn-danger">Cancelar</a>
+                        </div>
+
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

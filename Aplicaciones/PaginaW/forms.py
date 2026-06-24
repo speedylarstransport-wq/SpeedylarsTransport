@@ -2,7 +2,7 @@ from django import forms
 from django.contrib.auth.forms import UserCreationForm, UserChangeForm
 from django.core.validators import validate_email
 from django.core.exceptions import ValidationError
-from .models import Usuario, Conductor
+from .models import Usuario
 import re
 
 
@@ -196,21 +196,3 @@ class UsuarioForm(UserCreationForm):
         return user
 
 
-class ConductorForm(forms.ModelForm):
-    class Meta:
-        model = Conductor
-        fields = ['nombres_cond', 'apell_cond', 'cedla_cond', 'tipolicen_cond', 'telfno_cond']
-
-        widgets = {
-            'nombres_cond': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Nombres'}),
-            'apell_cond': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Apellidos'}),
-            'cedla_cond': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Cédula'}),
-            'tipolicen_cond': forms.Select(attrs={'class': 'form-control'}),
-            'telfno_cond': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Teléfono'}),
-        }
-
-    def clean_cedla_cond(self):
-        cedula = self.cleaned_data.get('cedla_cond')
-        if cedula and len(cedula) != 10:
-            raise forms.ValidationError("La cédula debe tener exactamente 10 dígitos.")
-        return cedula

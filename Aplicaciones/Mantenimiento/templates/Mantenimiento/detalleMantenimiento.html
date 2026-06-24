@@ -1,0 +1,198 @@
+{% extends "plantilla_admin.html" %}
+
+{% block contenido %}
+<br>
+<div class="d-flex justify-content-between align-items-center mb-3">
+    <h3>DETALLE DE MANTENIMIENTO #{{ mant.id }}</h3>
+    <a href="/Mantenimiento/" class="btn btn-secondary">
+        <i class="fas fa-arrow-left"></i> Volver
+    </a>
+</div>
+
+<!-- Datos generales -->
+<div class="card shadow mb-4">
+    <div class="card-header">
+        <h5 class="mb-0">Información General</h5>
+    </div>
+    <div class="card-body">
+        <div class="row">
+            <div class="col-md-4 mb-2">
+                <b>Unidad:</b>
+                {% if mant.activo %}
+                    {{ mant.activo.placa }} - {{ mant.activo.marca.nombre_marca }}
+                {% else %}
+                    {{ mant.remolque.nombre }} ({{ mant.remolque.get_tipo_display }})
+                {% endif %}
+            </div>
+            {% if mant.cabezal_ref %}
+            <div class="col-md-4 mb-2">
+                <b>Cabezal enganchado:</b> {{ mant.cabezal_ref.placa }}
+            </div>
+            {% endif %}
+            <div class="col-md-4 mb-2">
+                <b>Conductor:</b> {{ mant.conductor|default:'-' }}
+            </div>
+            <div class="col-md-4 mb-2">
+                <b>Tipo:</b>
+                {% if mant.tipo == 'preventivo' %}
+                    <span class="badge bg-success">Preventivo</span>
+                {% else %}
+                    <span class="badge bg-danger">Correctivo</span>
+                {% endif %}
+            </div>
+            <div class="col-md-4 mb-2">
+                <b>Fecha entrada:</b> {{ mant.fecha_entrada }}
+            </div>
+            <div class="col-md-4 mb-2">
+                <b>Fecha salida:</b> {{ mant.fecha_salida|default:'-' }}
+            </div>
+            <div class="col-md-4 mb-2">
+                <b>Km odómetro:</b> {{ mant.km_odometro|default:'-' }}
+            </div>
+            <div class="col-md-4 mb-2">
+                <b>Costo total:</b> ${{ mant.costo_total|default:'-' }}
+            </div>
+            <div class="col-md-4 mb-2">
+                <b>Fecha pago:</b> {{ mant.fecha_pago|default:'-' }}
+            </div>
+            <div class="col-md-12 mb-2">
+                <b>Observaciones:</b> {{ mant.observaciones|default:'-' }}
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Trabajos realizados -->
+<div class="card shadow">
+    <div class="card-header">
+        <h5 class="mb-0">Trabajos Realizados</h5>
+    </div>
+    <div class="card-body">
+        {% for detalle in detalles %}
+        <div class="card mb-3 border">
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <span>
+                    <b>{{ detalle.trabajo.nombre }}</b>
+                    {% if detalle.trabajo.tipo_control == 'km' %}
+                        <span class="badge bg-primary ms-2">Por km</span>
+                    {% else %}
+                        <span class="badge bg-secondary ms-2">Libre</span>
+                    {% endif %}
+                </span>
+                <button type="button" class="btn btn-success btn-sm"
+                    data-bs-toggle="modal"
+                    data-bs-target="#modalInsumo{{ detalle.id }}">
+                    <i class="fas fa-plus"></i> Agregar Insumo
+                </button>
+            </div>
+            <div class="card-body">
+                {% if detalle.observacion %}
+                <p><b>Observación del conductor:</b> {{ detalle.observacion }}</p>
+                {% endif %}
+
+                <!-- Insumos del trabajo -->
+                {% if detalle.insumodetalle_set.all %}
+                <table class="table table-sm table-bordered">
+                    <thead class="table-light">
+                        <tr>
+                            <th>INSUMO</th>
+                            <th>CANTIDAD</th>
+                            <th>UNIDAD</th>
+                            <th>COSTO UNITARIO</th>
+                            <th>SUBTOTAL</th>
+                            <th></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for insumo in detalle.insumodetalle_set.all %}
+                        <tr>
+                            <td>{{ insumo.nombre_insumo }}</td>
+                            <td>{{ insumo.cantidad }}</td>
+                            <td>{{ insumo.unidad|default:'-' }}</td>
+                            <td>${{ insumo.costo_unitario|default:'-' }}</td>
+                            <td>
+                                {% if insumo.costo_unitario %}
+                                    ${{ insumo.cantidad|floatformat:2 }}
+                                {% else %}
+                                    -
+                                {% endif %}
+                            </td>
+                            <td>
+                                <a onclick="return confirm('¿Eliminar insumo?')"
+                                   href="/Mantenimiento/insumo/eliminar/{{ insumo.id }}/"
+                                   class="btn btn-danger btn-sm">
+                                    <i class="fas fa-trash"></i>
+                                </a>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+                {% else %}
+                <p class="text-muted">No hay insumos registrados para este trabajo.</p>
+                {% endif %}
+            </div>
+        </div>
+
+        <!-- MODAL AGREGAR INSUMO -->
+        <div class="modal fade" id="modalInsumo{{ detalle.id }}" tabindex="-1">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title">AGREGAR INSUMO — {{ detalle.trabajo.nombre }}</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                    </div>
+                    <form action="/Mantenimiento/insumo/guardar/" method="POST">
+                        {% csrf_token %}
+                        <input type="hidden" name="detalle_id" value="{{ detalle.id }}">
+                        <input type="hidden" name="mantenimiento_id" value="{{ mant.id }}">
+                        <div class="modal-body">
+                            <div class="mb-3">
+                                <label class="form-label"><b>NOMBRE DEL INSUMO:</b></label>
+                                <input type="text" name="nombre_insumo" class="form-control" required>
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label"><b>CANTIDAD:</b></label>
+                                <input type="number" name="cantidad" class="form-control" step="0.01" required>
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label"><b>UNIDAD:</b></label>
+                                <select name="unidad" class="form-select">
+                                    <option value="">-- Seleccione --</option>
+                                    <option value="litros">Litros</option>
+                                    <option value="unidades">Unidades</option>
+                                    <option value="kg">Kg</option>
+                                    <option value="metros">Metros</option>
+                                </select>
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label"><b>COSTO UNITARIO:</b></label>
+                                <input type="number" name="costo_unitario" class="form-control" step="0.01">
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="submit" class="btn btn-primary">Guardar</button>
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        {% empty %}
+        <p class="text-muted">No hay trabajos registrados para este mantenimiento.</p>
+        {% endfor %}
+    </div>
+</div>
+
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    new DataTable('#tbl_detalles', {
+        language: {
+            url: '//cdn.datatables.net/plug-ins/1.13.5/i18n/es-ES.json'
+        }
+    });
+</script>
+{% endblock %}

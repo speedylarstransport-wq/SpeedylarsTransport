@@ -1,0 +1,192 @@
+{% extends "plantilla_admin.html" %}
+
+{% block contenido %}
+<br>
+<div class="d-flex justify-content-between align-items-center mb-3">
+    <h3>GESTIÓN DE CONDUCTORES</h3>
+    <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#modalNuevoConductor">
+        <i class="fas fa-plus"></i> Nuevo Conductor
+    </button>
+</div>
+
+{% if messages %}
+    {% for message in messages %}
+        <div class="alert alert-success alert-dismissible fade show" role="alert">
+            {{ message }}
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+    {% endfor %}
+{% endif %}
+
+<div class="card shadow">
+    <div class="card-body">
+        <table class="table table-bordered table-striped table-hover" id="tbl_conductores">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>NOMBRES</th>
+                    <th>APELLIDOS</th>
+                    <th>CÉDULA</th>
+                    <th>LICENCIA</th>
+                    <th>TELÉFONO</th>
+                    <th>ACCIONES</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for conductor in conductores %}
+                <tr>
+                    <td>{{ conductor.id_cond }}</td>
+                    <td>{{ conductor.nombres_cond }}</td>
+                    <td>{{ conductor.apell_cond }}</td>
+                    <td>{{ conductor.cedula_cond }}</td>
+                    <td>{{ conductor.tipolicen_cond }}</td>
+                    <td>{{ conductor.telfno_cond }}</td>
+                    <td>
+                        
+                            <button class="btn btn-warning btn-sm me-2"
+                                data-id="{{ conductor.id }}"
+                                data-nombres="{{ conductor.nombres_cond }}"
+                                data-apellidos="{{ conductor.apell_cond }}"
+                                data-cedula="{{ conductor.cedula_cond }}"
+                                data-licencia="{{ conductor.tipolicen_cond }}"
+                                data-telefono="{{ conductor.telfno_cond }}"
+                                onclick="abrirEditar(this)">
+                                <i class="fas fa-edit"></i> Editar
+                            </button>
+                            <a onclick="return confirm('¿Está seguro de eliminar este conductor?')"
+                            href="/Conductor/eliminar/{{ conductor.id }}/"
+                            class="btn btn-danger btn-sm">
+                                <i class="fas fa-trash"></i> Eliminar
+                            </a>
+                        
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+
+        <script>
+            let table = new DataTable('#tbl_conductores', {
+                language: {
+                    url: '//cdn.datatables.net/plug-ins/1.13.5/i18n/es-ES.json'
+                },
+                dom: 'Bfrtip',
+                buttons: ['copy', 'excel', 'csv', 'pdf', 'print'],
+                layout: {
+                    topStart: {
+                        buttons: ['copyHtml5', 'excelHtml5', 'csvHtml5', 'pdfHtml5', 'print']
+                    }
+                }
+            });
+        </script>
+    </div>
+</div>
+
+<!-- MODAL NUEVO CONDUCTOR -->
+<div class="modal fade" id="modalNuevoConductor" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">NUEVO CONDUCTOR</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <form action="/Conductor/guardar/" method="POST">
+                {% csrf_token %}
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <label class="form-label"><b>NOMBRES:</b></label>
+                        <input type="text" name="nombres_cond" class="form-control" required>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label"><b>APELLIDOS:</b></label>
+                        <input type="text" name="apell_cond" class="form-control" required>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label"><b>CÉDULA:</b></label>
+                        <input type="text" name="cedula_cond" class="form-control" required>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label"><b>TIPO DE LICENCIA:</b></label>
+                        <select name="tipolicen_cond" class="form-select" required>
+                            <option value="">-- Seleccione --</option>
+                            <option value="C">C</option>
+                            <option value="D">D</option>
+                            <option value="E">E</option>
+                            <option value="F">F</option>
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label"><b>TELÉFONO:</b></label>
+                        <input type="text" name="telfno_cond" class="form-control">
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="submit" class="btn btn-primary">Guardar</button>
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- MODAL EDITAR CONDUCTOR -->
+<div class="modal fade" id="modalEditarConductor" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">EDITAR CONDUCTOR</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <form action="/Conductor/procesarEdicionConductor/" method="POST">
+                {% csrf_token %}
+                <input type="hidden" name="id_cond" id="edit_id_cond">
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <label class="form-label"><b>NOMBRES:</b></label>
+                        <input type="text" name="nombres_cond" id="edit_nombres" class="form-control" required>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label"><b>APELLIDOS:</b></label>
+                        <input type="text" name="apell_cond" id="edit_apellidos" class="form-control" required>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label"><b>CÉDULA:</b></label>
+                        <input type="text" name="cedula_cond" id="edit_cedula" class="form-control" required>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label"><b>TIPO DE LICENCIA:</b></label>
+                        <select name="tipolicen_cond" id="edit_licencia" class="form-select" required>
+                            <option value="">-- Seleccione --</option>
+                            <option value="C">C</option>
+                            <option value="D">D</option>
+                            <option value="E">E</option>
+                            <option value="F">F</option>
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label"><b>TELÉFONO:</b></label>
+                        <input type="text" name="telfno_cond" id="edit_telefono" class="form-control">
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="submit" class="btn btn-primary">Actualizar</button>
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script>
+function abrirEditar(btn) {
+    document.getElementById('edit_id_cond').value = btn.dataset.id;
+    document.getElementById('edit_nombres').value = btn.dataset.nombres;
+    document.getElementById('edit_apellidos').value = btn.dataset.apellidos;
+    document.getElementById('edit_cedula').value = btn.dataset.cedula;
+    document.getElementById('edit_licencia').value = btn.dataset.licencia;
+    document.getElementById('edit_telefono').value = btn.dataset.telefono;
+    new bootstrap.Modal(document.getElementById('modalEditarConductor')).show();
+}
+</script>
+
+{% endblock %}

@@ -12,8 +12,8 @@ from django.core.validators import validate_email
 from django.core.exceptions import ValidationError
 import re
 
-from .models import Usuario, Conductor
-from .forms import UsuarioForm, ConductorForm
+from .models import Usuario
+from .forms import UsuarioForm
 from .decorators import rol_requerido
 
 
@@ -206,29 +206,31 @@ from django.conf import settings
 
 
 def login_view(request):
-    # Si ya inició sesión, no volver al login
+    # Si ya inició sesión
     if request.user.is_authenticated:
         return redirect('inicio')
 
     if request.method == 'POST':
-        # Ahora el campo 'username' del formulario contendrá el email
         email = request.POST.get('username', '').strip().lower()
         password = request.POST.get('password')
 
-        # Autenticar usando email (porque USERNAME_FIELD es 'email')
         user = authenticate(request, username=email, password=password)
 
         if user is not None:
             if user.is_active:
                 login(request, user)
 
-                # Redirección si viene de @login_required
+                # 🔥 AQUÍ ESTÁ LA CONEXIÓN ENTRE APPS
                 next_url = request.POST.get('next') or request.GET.get('next')
                 if next_url:
                     return redirect(next_url)
 
-                messages.success(request, f'¡Bienvenido/a {user.first_name}!')
-                return redirect('inicio')
+                # 🧠 DECISIÓN POR ROL
+                if user.is_staff or user.is_superuser or user.rol in ['admin', 'superadmin']:
+                    return redirect('plantilla_admin')  # 👉 Mantenimiento app
+                else:
+                    return redirect('inicio')  # 👉 PaginaW app
+
             else:
                 messages.warning(
                     request,
@@ -381,88 +383,6 @@ def eliminar_usuario(request, id):
 
 
 
-
-def nuevo_conductor(request):
-    """
-    Vista para crear un nuevo conductor.
-    """
-
-    if request.method == 'POST':
-        form = ConductorForm(request.POST)
-        if form.is_valid():
-            form.save()
-            messages.success(request, "¡Conductor registrado exitosamente!")
-            return redirect('nuevo_conductor')  # Puedes cambiar la URL según tu urls.py
-        else:
-            messages.error(request, "Por favor corrige los errores en el formulario.")
-    else:
-        form = ConductorForm()
-
-    context = {
-        'form': form
-    }
-    return render(request, 'conductor/nuevoConductor.html', context)
-
-
-
-
-
-
-
-# =========================
-# LISTADO DE CONDUCTORES
-# =========================
-#@login_required
-def listado_conductor(request):
-    conductores = Conductor.objects.select_related('usuario').all()
-
-    return render(request, 'conductor/listadoConductor.html', {
-        'conductores': conductores
-    })
-
-
-
-def editar_conductor(request, id):
-    conductor = get_object_or_404(Conductor, id_cond=id)
-
-    if request.method == 'POST':
-        conductor.nombres_cond = request.POST.get('nombres_cond')
-        conductor.apell_cond = request.POST.get('apell_cond')
-        conductor.telfno_cond = request.POST.get('telfno_cond')
-        conductor.save()
-        messages.success(request, 'Conductor actualizado correctamente')
-
-    return redirect('listado_conductor')
-
-
-# =========================
-# DESACTIVAR CONDUCTOR
-# =========================
-#@login_required
-def desactivar_conductor(request, id):
-    conductor = get_object_or_404(Conductor, id_cond=id)
-    usuario = conductor.usuario
-
-    usuario.is_active = False
-    usuario.save()
-
-    messages.warning(request, 'Conductor desactivado correctamente')
-    return redirect('listado_conductor')
-
-
-# =========================
-# ACTIVAR CONDUCTOR
-# =========================
-#@login_required
-def activar_conductor(request, id):
-    conductor = get_object_or_404(Conductor, id_cond=id)
-    usuario = conductor.usuario
-
-    usuario.is_active = True
-    usuario.save()
-
-    messages.success(request, 'Conductor activado correctamente')
-    return redirect('listado_conductor')
 
 from django.shortcuts import render, redirect
 from django.contrib import messages

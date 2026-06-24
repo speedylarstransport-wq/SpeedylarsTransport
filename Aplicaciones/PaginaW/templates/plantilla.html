@@ -110,21 +110,22 @@
                     <a href="{% url 'login' %}" class="nav-item nav-link">INICIAR SESIÓN</a>
                 {% endif %}
                 
+                <!--
                 {% if user.is_authenticated %}
                     {% if user.rol == 'admin' or user.rol == 'superadmin' %}    
                     <a href="{% url 'registrar_usuario' %}" class="nav-item nav-link">REGISTRAR</a>
                     {% endif %}
-                {% endif %}
+                {% endif %}  
 
                 {% if user.is_authenticated %}
                     {% if user.rol == 'admin' or user.rol == 'superadmin' %}
                         <a href="{% url 'lista_usuarios' %}" class="nav-item nav-link">USUARIOS</a>
                     {% endif %}
-                {% endif %}
+                {% endif %}  
 
                 {% if user.is_authenticated %}
                     <a href="{% url 'logout' %}" class="nav-item nav-link">CERRAR SESIÓN</a>
-                {% endif %}
+                {% endif %}  -->
                 <!-- Ver lista de usuarios
                     <a href="{% url 'lista_usuarios' %}" class="nav-item nav-link">USUARIOS</a>
                 

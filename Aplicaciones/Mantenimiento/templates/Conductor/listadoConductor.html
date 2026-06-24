@@ -1,0 +1,72 @@
+{% extends "plantilla_admin.html" %}
+
+{% block contenido %}
+<br>
+<br>
+<div class="d-flex justify-content-between align-items-center mb-3">
+    <h3>LISTADO DE CONDUCTORES</h3>
+    <a href="/mantenimiento/conductores/nuevo/" class="btn btn-primary">
+        <i class="fas fa-plus"></i> Nuevo Conductor
+    </a>
+</div>
+
+{% if messages %}
+    {% for message in messages %}
+        <div class="alert alert-success alert-dismissible fade show" role="alert">
+            {{ message }}
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+    {% endfor %}
+{% endif %}
+
+<div class="card shadow">
+    <div class="card-body">
+        <table class="table table-bordered table-striped table-hover" id="tbl_conductores">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>NOMBRES</th>
+                    <th>APELLIDOS</th>
+                    <th>CÉDULA</th>
+                    <th>LICENCIA</th>
+                    <th>TELÉFONO</th>
+                    <th>ACCIONES</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for conductor in conductores %}
+                <tr>
+                    <td>{{ conductor.id_cond }}</td>
+                    <td>{{ conductor.nombres_cond }}</td>
+                    <td>{{ conductor.apell_cond }}</td>
+                    <td>{{ conductor.cedula_cond }}</td>
+                    <td>{{ conductor.tipolicen_cond }}</td>
+                    <td>{{ conductor.telfno_cond }}</td>
+                    <td>
+                        <a href="/mantenimiento/conductores/editar/{{ conductor.id_cond }}/" class="btn btn-warning btn-sm me-2">Editar</a>
+                        <a onclick="return confirm('¿Está seguro de eliminar este conductor?')" 
+                           href="/mantenimiento/conductores/eliminar/{{ conductor.id_cond }}/" 
+                           class="btn btn-danger btn-sm">Eliminar</a>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+
+        <script>
+            let table = new DataTable('#tbl_conductores', {
+                language: {
+                    url: '//cdn.datatables.net/plug-ins/1.13.5/i18n/es-ES.json'
+                },
+                dom: 'Bfrtip',
+                buttons: ['copy', 'excel', 'csv', 'pdf', 'print'],
+                layout: {
+                    topStart: {
+                        buttons: ['copyHtml5', 'excelHtml5', 'csvHtml5', 'pdfHtml5', 'print']
+                    }
+                }
+            });
+        </script>
+    </div>
+</div>
+{% endblock %}
