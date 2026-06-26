@@ -1,22 +1,28 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib import messages
 from .models import Conductor, Marca, Activo, Remolque, TipoTrabajo, ConfiguracionMantenimiento, Mantenimiento, CargaCombustible, InsumoDetalle, DetalleMantenimiento
+from django.contrib.auth.decorators import login_required
+from Aplicaciones.PaginaW.decorators import rol_requerido
 
 # Create your views here.
 # =============================================
 # CONDUCTORES
 # =============================================
 
-
+@login_required
+@rol_requerido(['admin', 'superadmin'])
 def listadoConductor(request):
     conductores = Conductor.objects.all()
     return render(request, 'Conductor/listadoConductor.html', {'conductores': conductores})
 
+@login_required
+@rol_requerido(['admin', 'superadmin'])
 def nuevoConductor(request):
     conductores = Conductor.objects.all()
     return render(request, 'Conductor/nuevoConductor.html', {'conductores': conductores})
    
-
+@login_required
+@rol_requerido(['admin', 'superadmin'])
 def guardarConductor(request):
     nombres = request.POST['nombres_cond']
     apellidos = request.POST['apell_cond']
@@ -34,10 +40,16 @@ def guardarConductor(request):
     messages.success(request, 'Conductor registrado correctamente.')
     return redirect('/Conductor/')
 
+
+@login_required
+@rol_requerido(['admin', 'superadmin'])
 def editarConductor(request, id_cond):
     conductor = Conductor.objects.get(id_cond=id_cond)
     return render(request, 'Conductor/nuevoConductor.html', {'conductor': conductor})
 
+
+@login_required
+@rol_requerido(['admin', 'superadmin'])
 def procesarEdicionConductor(request):
     conductor = Conductor.objects.get(id=request.POST['id_cond'])
     conductor.nombres_cond = request.POST['nombres_cond']
@@ -58,11 +70,15 @@ def eliminarConductor(request, id_cond):
 # =============================================
 # MARCA
 # =============================================
-
+@login_required
+@rol_requerido(['admin', 'superadmin'])
 def gestionMarca(request):
     marcas = Marca.objects.all()
     return render(request, 'Marca/gestionMarca.html', {'marcas': marcas})
 
+
+@login_required
+@rol_requerido(['admin', 'superadmin'])
 def guardarMarca(request):
     nombre = request.POST['nombre_marca']
 
@@ -74,6 +90,9 @@ def guardarMarca(request):
     messages.success(request, 'Marca registrada correctamente.')
     return redirect('/Marca/')
 
+
+@login_required
+@rol_requerido(['admin', 'superadmin'])
 def procesarEdicionMarca(request):
     marca = Marca.objects.get(id=request.POST['id_marca'])
     marca.nombre_marca = request.POST['nombre_marca']
@@ -91,6 +110,9 @@ def eliminarMarca(request, id_marca):
 # CABEZALES
 # =============================================
 
+
+@login_required
+@rol_requerido(['admin', 'superadmin'])
 def gestionCabezal(request):
     cabezales = Activo.objects.all()
     marcas = Marca.objects.all()
@@ -99,6 +121,8 @@ def gestionCabezal(request):
         'marcas': marcas
     })
 
+@login_required
+@rol_requerido(['admin', 'superadmin'])
 def guardarCabezal(request):
     placa = request.POST['placa']
 
@@ -121,6 +145,8 @@ def guardarCabezal(request):
     messages.success(request, 'Cabezal registrado correctamente.')
     return redirect('/Cabezal/')
 
+@login_required
+@rol_requerido(['admin', 'superadmin'])
 def procesarEdicionCabezal(request):
     cabezal = Activo.objects.get(id=request.POST['id_cabezal'])
     cabezal.placa = request.POST['placa']
@@ -137,6 +163,9 @@ def procesarEdicionCabezal(request):
     messages.success(request, 'Cabezal actualizado correctamente.')
     return redirect('/Cabezal/')
 
+
+@login_required
+@rol_requerido(['admin', 'superadmin'])
 def eliminarCabezal(request, id_cabezal):
     cabezal = get_object_or_404(Activo, id=id_cabezal)
     cabezal.delete()
@@ -146,7 +175,8 @@ def eliminarCabezal(request, id_cabezal):
 # =============================================
 # REMOLQUES
 # =============================================
-
+@login_required
+@rol_requerido(['admin', 'superadmin'])
 def gestionRemolque(request):
     remolques = Remolque.objects.all()
     marcas = Marca.objects.all()
@@ -155,6 +185,8 @@ def gestionRemolque(request):
         'marcas': marcas
     })
 
+@login_required
+@rol_requerido(['admin', 'superadmin'])
 def guardarRemolque(request):
     Remolque.objects.create(
         nombre=request.POST['nombre'],
@@ -167,6 +199,8 @@ def guardarRemolque(request):
     messages.success(request, 'Remolque registrado correctamente.')
     return redirect('/Remolque/')
 
+@login_required
+@rol_requerido(['admin', 'superadmin'])
 def procesarEdicionRemolque(request):
     remolque = Remolque.objects.get(id=request.POST['id_remolque'])
     remolque.nombre = request.POST['nombre']
@@ -179,6 +213,9 @@ def procesarEdicionRemolque(request):
     messages.success(request, 'Remolque actualizado correctamente.')
     return redirect('/Remolque/')
 
+
+@login_required
+@rol_requerido(['admin', 'superadmin'])
 def eliminarRemolque(request, id_remolque):
     remolque = get_object_or_404(Remolque, id=id_remolque)
     remolque.delete()
@@ -189,10 +226,14 @@ def eliminarRemolque(request, id_remolque):
 # TIPO DE TRABAJO
 # =============================================
 
+@login_required
+@rol_requerido(['admin', 'superadmin'])
 def gestionTipoTrabajo(request):
     trabajos = TipoTrabajo.objects.all()
     return render(request, 'TipoTrabajo/gestionTipoTrabajo.html', {'trabajos': trabajos})
 
+@login_required
+@rol_requerido(['admin', 'superadmin'])
 def guardarTipoTrabajo(request):
     nombre = request.POST['nombre']
 
@@ -209,6 +250,8 @@ def guardarTipoTrabajo(request):
     messages.success(request, 'Tipo de trabajo registrado correctamente.')
     return redirect('/TipoTrabajo/')
 
+@login_required
+@rol_requerido(['admin', 'superadmin'])
 def procesarEdicionTipoTrabajo(request):
     trabajo = TipoTrabajo.objects.get(id=request.POST['id_trabajo'])
     trabajo.nombre = request.POST['nombre']
@@ -219,6 +262,8 @@ def procesarEdicionTipoTrabajo(request):
     messages.success(request, 'Tipo de trabajo actualizado correctamente.')
     return redirect('/TipoTrabajo/')
 
+@login_required
+@rol_requerido(['admin', 'superadmin'])
 def eliminarTipoTrabajo(request, id_trabajo):
     trabajo = get_object_or_404(TipoTrabajo, id=id_trabajo)
     trabajo.delete()
@@ -229,6 +274,8 @@ def eliminarTipoTrabajo(request, id_trabajo):
 # CONFIGURACION DE MANTENIMIENTO
 # =============================================
 
+@login_required
+@rol_requerido(['admin', 'superadmin'])
 def gestionConfiguracion(request):
     configuraciones = ConfiguracionMantenimiento.objects.select_related('marca', 'trabajo').all()
     marcas = Marca.objects.all()
@@ -239,6 +286,8 @@ def gestionConfiguracion(request):
         'trabajos': trabajos
     })
 
+@login_required
+@rol_requerido(['admin', 'superadmin'])
 def guardarConfiguracion(request):
     marca_id = request.POST['marca_id']
     trabajo_id = request.POST['trabajo_id']
@@ -255,6 +304,8 @@ def guardarConfiguracion(request):
     messages.success(request, 'Configuración registrada correctamente.')
     return redirect('/ConfiguracionMan/')
 
+@login_required
+@rol_requerido(['admin', 'superadmin'])
 def procesarEdicionConfiguracion(request):
     config = ConfiguracionMantenimiento.objects.get(id=request.POST['id_config'])
     config.marca_id = request.POST['marca_id']
@@ -264,6 +315,8 @@ def procesarEdicionConfiguracion(request):
     messages.success(request, 'Configuración actualizada correctamente.')
     return redirect('/ConfiguracionMan/')
 
+@login_required
+@rol_requerido(['admin', 'superadmin'])
 def eliminarConfiguracion(request, id_config):
     config = get_object_or_404(ConfiguracionMantenimiento, id=id_config)
     config.delete()
@@ -274,6 +327,9 @@ def eliminarConfiguracion(request, id_config):
 # MANTENIMIENTO
 # =============================================
 
+
+@login_required
+@rol_requerido(['admin', 'superadmin'])
 def gestionMantenimiento(request):
     mantenimientos = Mantenimiento.objects.select_related(
         'activo', 'remolque', 'conductor'
@@ -290,6 +346,8 @@ def gestionMantenimiento(request):
         'tipos_trabajo': tipos_trabajo 
     })
 
+@login_required
+@rol_requerido(['admin', 'superadmin'])
 def guardarMantenimiento(request):
     activo_id = request.POST.get('activo_id') or None
     remolque_id = request.POST.get('remolque_id') or None
@@ -333,12 +391,18 @@ def guardarMantenimiento(request):
     messages.success(request, 'Mantenimiento registrado correctamente.')
     return redirect('/Mantenimiento/')
 
+
+@login_required
+@rol_requerido(['admin', 'superadmin'])
 def eliminarMantenimiento(request, id_mant):
     mant = get_object_or_404(Mantenimiento, id=id_mant)
     mant.delete()
     messages.success(request, 'Mantenimiento eliminado.')
     return redirect('/Mantenimiento/')
 
+
+@login_required
+@rol_requerido(['admin', 'superadmin'])
 def detalleMantenimiento(request, id_mant):
     mant = get_object_or_404(Mantenimiento, id=id_mant)
     detalles = DetalleMantenimiento.objects.select_related('trabajo').filter(mantenimiento=mant)
@@ -351,6 +415,8 @@ def detalleMantenimiento(request, id_mant):
 # CARGA DE COMBUSTIBLE
 # =============================================
 
+@login_required
+@rol_requerido(['admin', 'superadmin'])
 def gestionCombustible(request):
     cargas = CargaCombustible.objects.select_related('activo', 'registrado_por').all().order_by('-fecha')
     cabezales = Activo.objects.filter(estado='activo')
@@ -359,6 +425,9 @@ def gestionCombustible(request):
         'cabezales': cabezales
     })
 
+
+@login_required
+@rol_requerido(['admin', 'superadmin'])
 def guardarCombustible(request):
     CargaCombustible.objects.create(
         activo_id=request.POST['activo_id'],
@@ -372,12 +441,16 @@ def guardarCombustible(request):
     messages.success(request, 'Carga de combustible registrada correctamente.')
     return redirect('/Combustible/')
 
+@login_required
+@rol_requerido(['admin', 'superadmin'])
 def eliminarCombustible(request, id_carga):
     carga = get_object_or_404(CargaCombustible, id=id_carga)
     carga.delete()
     messages.success(request, 'Registro eliminado.')
     return redirect('/Combustible/')
 
+@login_required
+@rol_requerido(['admin', 'superadmin'])
 def guardarInsumo(request):
     InsumoDetalle.objects.create(
         detalle_id=request.POST['detalle_id'],
@@ -389,6 +462,8 @@ def guardarInsumo(request):
     messages.success(request, 'Insumo agregado correctamente.')
     return redirect(f'/Mantenimiento/detalle/{request.POST["mantenimiento_id"]}/')
 
+@login_required
+@rol_requerido(['admin', 'superadmin'])
 def eliminarInsumo(request, id_insumo):
     insumo = get_object_or_404(InsumoDetalle, id=id_insumo)
     mantenimiento_id = insumo.detalle.mantenimiento.id

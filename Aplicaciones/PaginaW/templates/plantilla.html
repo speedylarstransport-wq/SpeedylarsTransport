@@ -106,8 +106,23 @@
                 <a href="{% url 'inicio' %}#nosotros" class="nav-item nav-link">QUIENES SOMOS</a>
                 <a href="{% url 'inicio' %}#servicios" class="nav-item nav-link">SERVICIOS</a>
                 <a href="{% url 'inicio' %}#contacto" class="nav-item nav-link">CONTACTANOS</a>
+                <!--
                 {% if not user.is_authenticated %}
                     <a href="{% url 'login' %}" class="nav-item nav-link">INICIAR SESIÓN</a>
+                {% endif %} -->
+
+                {% if user.is_authenticated %}
+                    <a href="{% url 'plantilla_admin' %}" class="nav-item nav-link">
+                        PANEL
+                    </a>
+
+                    <a href="{% url 'logout' %}" class="nav-item nav-link">
+                        CERRAR SESIÓN
+                    </a>
+                {% else %}
+                    <a href="{% url 'login' %}" class="nav-item nav-link">
+                        INICIAR SESIÓN
+                    </a>
                 {% endif %}
                 
                 <!--

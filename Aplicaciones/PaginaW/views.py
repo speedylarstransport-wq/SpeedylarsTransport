@@ -191,10 +191,10 @@ def servicios(request):
 def contactanos(request):
     return render(request, 'contactanos.html')
 
+@login_required
+@rol_requerido(['admin', 'superadmin'])
 def aplicaciones(request):
     return render(request, 'plantilla_admin.html')
-
-
 def error_404(request, url=None):
     return render(request, '404.html', status=404)
 
@@ -206,8 +206,15 @@ from django.conf import settings
 
 
 def login_view(request):
+
     # Si ya inició sesión
     if request.user.is_authenticated:
+
+        # Si es administrador
+        if request.user.is_staff or request.user.is_superuser or request.user.rol in ['admin', 'superadmin']:
+            return redirect('plantilla_admin')
+
+        # Si es conductor u otro usuario
         return redirect('inicio')
 
     if request.method == 'POST':
@@ -220,16 +227,16 @@ def login_view(request):
             if user.is_active:
                 login(request, user)
 
-                # 🔥 AQUÍ ESTÁ LA CONEXIÓN ENTRE APPS
+                # Si venía de una página protegida
                 next_url = request.POST.get('next') or request.GET.get('next')
                 if next_url:
                     return redirect(next_url)
 
-                # 🧠 DECISIÓN POR ROL
+                # Redirección según el rol
                 if user.is_staff or user.is_superuser or user.rol in ['admin', 'superadmin']:
-                    return redirect('plantilla_admin')  # 👉 Mantenimiento app
+                    return redirect('plantilla_admin')
                 else:
-                    return redirect('inicio')  # 👉 PaginaW app
+                    return redirect('inicio')
 
             else:
                 messages.warning(
@@ -237,7 +244,10 @@ def login_view(request):
                     'Tu cuenta está desactivada. Contacta al administrador.'
                 )
         else:
-            messages.error(request, 'Correo electrónico o contraseña incorrectos.')
+            messages.error(
+                request,
+                'Correo electrónico o contraseña incorrectos.'
+            )
 
     return render(request, 'login.html')
 
