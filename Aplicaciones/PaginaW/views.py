@@ -1,3 +1,5 @@
+import os
+
 from django.shortcuts import render, redirect
 from django.conf import settings
 from django.http import JsonResponse  
@@ -447,6 +449,9 @@ def recuperar_contrasena(request):
                 codigo=codigo,
                 valido_hasta=expira
             )
+            
+                # 👇 DEBUG (AQUÍ VA)
+            print("BREVO KEY:", os.environ.get("BREVO_API_KEY"))
 
             # 📩 ENVIAR CORREO CON BREVO
             contenido = f"""
