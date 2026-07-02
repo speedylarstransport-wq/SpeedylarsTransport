@@ -393,12 +393,11 @@ def eliminar_usuario(request, id):
 
 
 
-
 from django.shortcuts import render, redirect
 from django.contrib import messages
 from django.utils import timezone
-from django.conf import settings
-from django.core.mail import send_mail
+
+from utils.email import enviar_correo
 
 from .models import Usuario, CodigoRecuperacion
 
@@ -425,7 +424,7 @@ def recuperar_contrasena(request):
         email = request.POST.get('email', '').strip().lower()
         context['email'] = email
 
-        # 🔹 BUSCAR USUARIO (CUSTOM USER)
+        # 🔹 BUSCAR USUARIO
         try:
             usuario = Usuario.objects.get(email=email)
         except Usuario.DoesNotExist:
@@ -449,20 +448,25 @@ def recuperar_contrasena(request):
                 valido_hasta=expira
             )
 
-            try:
-                send_mail(
-                    'Código de recuperación de contraseña',
-                    f'Tu código de recuperación es: {codigo}\n\nEste código vence en 15 minutos.',
-                    settings.EMAIL_HOST_USER,
-                    [usuario.email],
-                    fail_silently=False,
-                )
+            # 📩 ENVIAR CORREO CON BREVO
+            contenido = f"""
+            <h2>Código de recuperación</h2>
+            <p>Tu código es: <strong>{codigo}</strong></p>
+            <p>Este código vence en 15 minutos.</p>
+            """
+
+            status, respuesta = enviar_correo(
+                usuario.email,
+                "Código de recuperación de contraseña",
+                contenido
+            )
+
+            if status == 201:
                 messages.success(request, "Se ha enviado un código a tu correo.")
                 context['mostrar_formulario_codigo'] = True
-
-            except Exception as e:
+            else:
                 messages.error(request, "No se pudo enviar el correo. Intenta más tarde.")
-                print("Error correo:", e)
+                print("Error Brevo:", respuesta)
 
         # =========================
         # PASO 2 → VALIDAR CÓDIGO
