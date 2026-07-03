@@ -213,12 +213,14 @@ def login_view(request):
     # Si ya inició sesión
     if request.user.is_authenticated:
 
-        # Si es administrador
-        if request.user.is_staff or request.user.is_superuser or request.user.rol in ['admin', 'superadmin']:
+        if request.user.rol in ['admin', 'superadmin']:
             return redirect('plantilla_admin')
 
-        # Si es conductor u otro usuario
+        elif request.user.rol == 'conductor':
+            return redirect('gestionMantenimiento')
+
         return redirect('inicio')
+
 
     if request.method == 'POST':
         email = request.POST.get('username', '').strip().lower()
