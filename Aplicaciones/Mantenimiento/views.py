@@ -329,7 +329,7 @@ def eliminarConfiguracion(request, id_config):
 
 
 @login_required
-@rol_requerido(['admin', 'superadmin'])
+@rol_requerido(['admin', 'superadmin', 'conductor'])
 def gestionMantenimiento(request):
     mantenimientos = Mantenimiento.objects.select_related(
         'activo', 'remolque', 'conductor'
@@ -347,7 +347,7 @@ def gestionMantenimiento(request):
     })
 
 @login_required
-@rol_requerido(['admin', 'superadmin'])
+@rol_requerido(['admin', 'superadmin', 'conductor'])
 def guardarMantenimiento(request):
     activo_id = request.POST.get('activo_id') or None
     remolque_id = request.POST.get('remolque_id') or None
