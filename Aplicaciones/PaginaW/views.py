@@ -237,9 +237,14 @@ def login_view(request):
                 if next_url:
                     return redirect(next_url)
 
+
                 # Redirección según el rol
-                if user.is_staff or user.is_superuser or user.rol in ['admin', 'superadmin']:
+                if user.rol in ['admin', 'superadmin']:
                     return redirect('plantilla_admin')
+
+                elif user.rol == 'conductor':
+                    return redirect('gestionMantenimiento')
+
                 else:
                     return redirect('inicio')
 
