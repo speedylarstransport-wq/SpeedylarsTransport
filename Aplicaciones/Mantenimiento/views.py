@@ -393,7 +393,7 @@ def guardarMantenimiento(request):
 
 
 @login_required
-@rol_requerido(['admin', 'superadmin'])
+@rol_requerido(['admin', 'superadmin', 'conductor'])
 def eliminarMantenimiento(request, id_mant):
     mant = get_object_or_404(Mantenimiento, id=id_mant)
     mant.delete()
@@ -402,7 +402,7 @@ def eliminarMantenimiento(request, id_mant):
 
 
 @login_required
-@rol_requerido(['admin', 'superadmin'])
+@rol_requerido(['admin', 'superadmin', 'conductor'])
 def detalleMantenimiento(request, id_mant):
     mant = get_object_or_404(Mantenimiento, id=id_mant)
     detalles = DetalleMantenimiento.objects.select_related('trabajo').filter(mantenimiento=mant)
