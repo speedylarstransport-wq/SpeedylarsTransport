@@ -161,6 +161,8 @@ def enviar_correo_brevo(nombre, correo, telefono, empresa, mensaje):
 
 
 def inicio(request):
+    print("Método:", request.method)
+    print("POST:", request.POST)
     if request.method == "POST":
         nombre = request.POST.get("nombre")
         correo = request.POST.get("correo")
