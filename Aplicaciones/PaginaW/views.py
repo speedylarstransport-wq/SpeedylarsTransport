@@ -194,9 +194,10 @@ def contactanos(request):
     return render(request, 'contactanos.html')
 
 @login_required
-@rol_requerido(['admin', 'superadmin'])
+@rol_requerido(['admin', 'superadmin', 'conductor'])
 def aplicaciones(request):
     return render(request, 'plantilla_admin.html')
+
 def error_404(request, url=None):
     return render(request, '404.html', status=404)
 
