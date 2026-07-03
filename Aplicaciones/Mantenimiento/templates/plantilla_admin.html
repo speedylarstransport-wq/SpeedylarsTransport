@@ -174,7 +174,7 @@
                 {% endif %}                    
 
                 {% if user.is_authenticated %}
-                    {% if user.rol == 'admin' or user.rol == 'superadmin' %}                   
+                    {% if user.rol == 'admin' or user.rol == 'superadmin' or user.rol == 'conductor' %}                   
                     <li>
                       <a href="{% url 'gestionMantenimiento' %}">
                         <span class="sub-item">Gestion Mantenimiento</span>
