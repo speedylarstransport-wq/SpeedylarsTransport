@@ -17,7 +17,7 @@ import re
 from .models import Usuario
 from .forms import UsuarioForm
 from .decorators import rol_requerido
-
+from django.contrib.auth import update_session_auth_hash
 
 def enviar_correo_brevo(nombre, correo, telefono, empresa, mensaje):
     # Verifica que exista la API KEY
@@ -376,16 +376,21 @@ def editar_usuario(request, id):
             if password != password_confirm:
                 messages.error(request, 'Las contraseñas no coinciden')
                 return redirect('lista_usuarios')
+
             if len(password) < 8:
                 messages.error(request, 'La contraseña debe tener al menos 8 caracteres')
                 return redirect('lista_usuarios')
+
             usuario.set_password(password)
 
         usuario.save()
+
+        # Mantener la sesión si el usuario cambia su propia contraseña
+        if usuario == request.user:
+            update_session_auth_hash(request, usuario)
+
         messages.success(request, f'Usuario {usuario.email} actualizado correctamente')
         return redirect('lista_usuarios')
-
-    return redirect('lista_usuarios')
 
 
 # =====================================================
