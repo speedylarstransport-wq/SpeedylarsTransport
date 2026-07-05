@@ -219,6 +219,8 @@
         </div>
     </div>
 </div>
+{% endblock %}
+{% block extra_js %}
 
 <script>
 // Variables globales para los datos de los usuarios
@@ -244,64 +246,50 @@ function abrirModalEditar(usuarioId) {
         document.getElementById('edit_is_active').checked = usuario.is_active;
         document.getElementById('edit_password').value = '';
         document.getElementById('edit_password_confirm').value = '';
-        
-        var form = document.getElementById('formEditarUsuario');
-        form.action = "{% url 'editar_usuario' 0 %}".replace('0', usuarioId);
-        
-        var modal = new bootstrap.Modal(document.getElementById('editUserModal'));
-        modal.show();
+
+        document.getElementById('formEditarUsuario').action =
+            "{% url 'editar_usuario' 0 %}".replace('0', usuarioId);
+
+        new bootstrap.Modal(document.getElementById('editUserModal')).show();
     }
 }
 
 function abrirModalEliminar(usuarioId, usuarioEmail) {
     document.getElementById('deleteUserEmail').textContent = usuarioEmail;
-    document.getElementById('deleteUserLink').href = "{% url 'eliminar_usuario' 0 %}".replace('0', usuarioId);
-    
-    var modal = new bootstrap.Modal(document.getElementById('deleteUserModal'));
-    modal.show();
+    document.getElementById('deleteUserLink').href =
+        "{% url 'eliminar_usuario' 0 %}".replace('0', usuarioId);
+
+    new bootstrap.Modal(document.getElementById('deleteUserModal')).show();
 }
 
 // Validación de nombres y apellidos
 ['edit_first_name', 'edit_last_name'].forEach(id => {
     const campo = document.getElementById(id);
     if (campo) {
-        campo.addEventListener('input', function() {
+        campo.addEventListener('input', function () {
             this.value = this.value.replace(/[^A-Za-zÁÉÍÓÚáéíóúÑñ\s]/g, '');
         });
     }
 });
 
-$(document).ready(function () {
+$(function () {
     $('#mitablaUsuarios').DataTable({
         language: {
             url: '//cdn.datatables.net/plug-ins/1.13.5/i18n/es-ES.json'
         },
         dom: 'Bfrtip',
-        buttons: ['copyHtml5', 'excelHtml5', 'csvHtml5', 'pdfHtml5', 'print'],
-        layout: {
-            topStart: {
-                buttons: ['copyHtml5', 'excelHtml5', 'csvHtml5', 'pdfHtml5', 'print']
-            }
-        },
+        buttons: [
+            'copyHtml5',
+            'excelHtml5',
+            'csvHtml5',
+            'pdfHtml5',
+            'print'
+        ],
         pageLength: 10,
         responsive: true,
         order: [[0, 'asc']]
     });
 });
 </script>
-
-<!-- DataTables CSS y JS -->
-<link rel="stylesheet" href="https://cdn.datatables.net/1.13.6/css/dataTables.bootstrap5.min.css">
-<link rel="stylesheet" href="https://cdn.datatables.net/buttons/2.4.2/css/buttons.bootstrap5.min.css">
-<script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
-<script src="https://cdn.datatables.net/1.13.6/js/dataTables.bootstrap5.min.js"></script>
-<script src="https://cdn.datatables.net/buttons/2.4.2/js/dataTables.buttons.min.js"></script>
-<script src="https://cdn.datatables.net/buttons/2.4.2/js/buttons.bootstrap5.min.js"></script>
-<script src="https://cdn.datatables.net/buttons/2.4.2/js/buttons.html5.min.js"></script>
-<script src="https://cdn.datatables.net/buttons/2.4.2/js/buttons.print.min.js"></script>
-<script src="https://cdn.datatables.net/responsive/2.5.0/js/dataTables.responsive.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.53/pdfmake.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.53/vfs_fonts.js"></script>
 
 {% endblock %}

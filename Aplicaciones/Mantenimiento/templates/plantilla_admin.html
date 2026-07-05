@@ -42,6 +42,7 @@
     <link rel="stylesheet" href="{% static 'static_admin/assets/css/demo.css' %}" />
     <!-- DataTables Buttons CSS -->
     <link rel="stylesheet" href="https://cdn.datatables.net/buttons/2.3.6/css/buttons.bootstrap5.min.css">
+    <link rel="stylesheet" href="https://cdn.datatables.net/responsive/2.5.0/css/responsive.bootstrap5.min.css">
   </head>
   <body >
     <div class="wrapper">
@@ -213,7 +214,7 @@
             <div class="logo-header" data-background-color="dark">
               <a href="#" class="logo">
                 <img
-                  src="{% static 'img/logosinfondo' %}"
+                  src="{% static 'img/logosinfondo.png' %}"
                   alt="navbar brand"
                   class="navbar-brand"
                   height="20"
@@ -489,6 +490,8 @@
 
     <!-- Datatables -->
     <script src="{% static 'static_admin/assets/js/plugin/datatables/datatables.min.js' %}"></script>
+    <script src="https://cdn.datatables.net/responsive/2.5.0/js/dataTables.responsive.min.js"></script>
+    <script src="https://cdn.datatables.net/responsive/2.5.0/js/responsive.bootstrap5.min.js"></script>
 
     <!-- Bootstrap Notify -->
     <script src="{% static 'static_admin/assets/js/plugin/bootstrap-notify/bootstrap-notify.min.js' %}"></script>
