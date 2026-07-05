@@ -20,55 +20,45 @@
 
 <div class="card shadow">
     <div class="card-body">
-        <table class="table table-bordered table-striped table-hover" id="tbl_config">
-            <thead>
-                <tr>
-                    <th>ID</th>
-                    <th>MARCA</th>
-                    <th>TRABAJO</th>
-                    <th>CADA (KM)</th>
-                    <th>ACCIONES</th>
-                </tr>
-            </thead>
-            <tbody>
-                {% for config in configuraciones %}
-                <tr>
-                    <td>{{ config.id }}</td>
-                    <td>{{ config.marca.nombre_marca }}</td>
-                    <td>{{ config.trabajo.nombre }}</td>
-                    <td>{{ config.km_intervalo }}</td>
-                    <td>
-                        <button class="btn btn-warning btn-sm me-2"
-                            data-id="{{ config.id }}"
-                            data-marca="{{ config.marca.id }}"
-                            data-trabajo="{{ config.trabajo.id }}"
-                            data-km="{{ config.km_intervalo }}"
-                            onclick="abrirEditar(this)">
-                            <i class="fas fa-edit"></i> Editar
-                        </button>
-                        <a onclick="return confirm('¿Está seguro de eliminar esta configuración?')"
-                           href="/ConfiguracionMan/eliminar/{{ config.id }}/"
-                           class="btn btn-danger btn-sm">
-                            <i class="fas fa-trash"></i> Eliminar
-                        </a>
-                    </td>
-                </tr>
-                {% endfor %}
-            </tbody>
-        </table>
-        <script>
-            let table = new DataTable('#tbl_config', {
-                language: {
-                    url: '//cdn.datatables.net/plug-ins/1.13.5/i18n/es-ES.json'
-                },
-                dom: 'Bfrtip',
-                layout: {
-                    topStart: {
-                        buttons: ['copyHtml5', 'excelHtml5', 'csvHtml5', 'pdfHtml5', 'print']
-                    }
-                }
-            });
-        </script>
+        <div class="dt-responsive table-responsive">
+            <table class="table table-bordered table-striped table-hover" id="tbl_config">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>MARCA</th>
+                        <th>TRABAJO</th>
+                        <th>CADA (KM)</th>
+                        <th>ACCIONES</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for config in configuraciones %}
+                    <tr>
+                        <td>{{ config.id }}</td>
+                        <td>{{ config.marca.nombre_marca }}</td>
+                        <td>{{ config.trabajo.nombre }}</td>
+                        <td>{{ config.km_intervalo }}</td>
+                        <td>
+                            <button class="btn btn-warning btn-sm me-2"
+                                data-id="{{ config.id }}"
+                                data-marca="{{ config.marca.id }}"
+                                data-trabajo="{{ config.trabajo.id }}"
+                                data-km="{{ config.km_intervalo }}"
+                                onclick="abrirEditar(this)">
+                                <i class="fas fa-edit"></i> Editar
+                            </button>
+                            <a onclick="return confirm('¿Está seguro de eliminar esta configuración?')"
+                            href="/ConfiguracionMan/eliminar/{{ config.id }}/"
+                            class="btn btn-danger btn-sm">
+                                <i class="fas fa-trash"></i> Eliminar
+                            </a>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+
     </div>
 </div>
 
@@ -167,6 +157,22 @@ function abrirEditar(btn) {
     document.getElementById('edit_km').value = btn.dataset.km;
     new bootstrap.Modal(document.getElementById('modalEditarConfig')).show();
 }
+
+document.addEventListener("DOMContentLoaded", function () {
+    $('#tbl_config').DataTable({
+        language: {
+            url: '//cdn.datatables.net/plug-ins/1.13.5/i18n/es-ES.json'
+        },
+        dom: 'Bfrtip',
+        buttons: [
+            'excelHtml5',
+            'pdfHtml5'
+        ],
+        pageLength: 10,
+        responsive: true,
+        order: [[0, 'asc']]
+    });
+});
 </script>
 
 {% endblock %}

@@ -21,52 +21,62 @@
 
 <div class="card shadow">
     <div class="card-body">
-        <table class="table table-bordered table-striped table-hover" id="tbl_conductores">
-            <thead>
-                <tr>
-                    <th>ID</th>
-                    <th>NOMBRES</th>
-                    <th>APELLIDOS</th>
-                    <th>CÉDULA</th>
-                    <th>LICENCIA</th>
-                    <th>TELÉFONO</th>
-                    <th>ACCIONES</th>
-                </tr>
-            </thead>
-            <tbody>
-                {% for conductor in conductores %}
-                <tr>
-                    <td>{{ conductor.id_cond }}</td>
-                    <td>{{ conductor.nombres_cond }}</td>
-                    <td>{{ conductor.apell_cond }}</td>
-                    <td>{{ conductor.cedula_cond }}</td>
-                    <td>{{ conductor.tipolicen_cond }}</td>
-                    <td>{{ conductor.telfno_cond }}</td>
-                    <td>
-                        <a href="/mantenimiento/conductores/editar/{{ conductor.id_cond }}/" class="btn btn-warning btn-sm me-2">Editar</a>
-                        <a onclick="return confirm('¿Está seguro de eliminar este conductor?')" 
-                           href="/mantenimiento/conductores/eliminar/{{ conductor.id_cond }}/" 
-                           class="btn btn-danger btn-sm">Eliminar</a>
-                    </td>
-                </tr>
-                {% endfor %}
-            </tbody>
-        </table>
+        <div class="table-responsive">
+            <table class="table table-bordered table-striped table-hover" id="tbl_conductores">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>NOMBRES</th>
+                        <th>APELLIDOS</th>
+                        <th>CÉDULA</th>
+                        <th>LICENCIA</th>
+                        <th>TELÉFONO</th>
+                        <th>ACCIONES</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for conductor in conductores %}
+                    <tr>
+                        <td>{{ conductor.id_cond }}</td>
+                        <td>{{ conductor.nombres_cond }}</td>
+                        <td>{{ conductor.apell_cond }}</td>
+                        <td>{{ conductor.cedula_cond }}</td>
+                        <td>{{ conductor.tipolicen_cond }}</td>
+                        <td>{{ conductor.telfno_cond }}</td>
+                        <td>
+                            <a href="/mantenimiento/conductores/editar/{{ conductor.id_cond }}/" class="btn btn-warning btn-sm me-2">Editar</a>
+                            <a onclick="return confirm('¿Está seguro de eliminar este conductor?')" 
+                            href="/mantenimiento/conductores/eliminar/{{ conductor.id_cond }}/" 
+                            class="btn btn-danger btn-sm">Eliminar</a>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
 
-        <script>
-            let table = new DataTable('#tbl_conductores', {
-                language: {
-                    url: '//cdn.datatables.net/plug-ins/1.13.5/i18n/es-ES.json'
-                },
-                dom: 'Bfrtip',
-                buttons: ['copy', 'excel', 'csv', 'pdf', 'print'],
-                layout: {
-                    topStart: {
-                        buttons: ['copyHtml5', 'excelHtml5', 'csvHtml5', 'pdfHtml5', 'print']
-                    }
-                }
-            });
-        </script>
+<script>
+$(function () {
+    $('#tbl_conductores').DataTable({
+        language: {
+            url: '//cdn.datatables.net/plug-ins/1.13.5/i18n/es-ES.json'
+        },
+        dom: 'Bfrtip',
+        buttons: [
+            'copyHtml5',
+            'excelHtml5',
+            'csvHtml5',
+            'pdfHtml5',
+            'print'
+        ],
+        responsive: true,
+        pageLength: 10,
+        order: [[0, 'asc']]
+    });
+});
+</script>
+
     </div>
 </div>
+
 {% endblock %}

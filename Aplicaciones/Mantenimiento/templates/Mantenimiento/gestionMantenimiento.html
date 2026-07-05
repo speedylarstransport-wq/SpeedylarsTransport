@@ -20,57 +20,59 @@
 
 <div class="card shadow">
     <div class="card-body">
-        <table class="table table-bordered table-striped table-hover" id="tbl_mantenimiento">
-            <thead>
-                <tr>
-                    <th>ID</th>
-                    <th>UNIDAD</th>
-                    <th>TIPO</th>
-                    <th>CONDUCTOR</th>
-                    <th>FECHA ENTRADA</th>
-                    <th>FECHA SALIDA</th>
-                    <th>KM</th>
-                    <th>COSTO</th>
-                    <th>ACCIONES</th>
-                </tr>
-            </thead>
-            <tbody>
-                {% for mant in mantenimientos %}
-                <tr>
-                    <td>{{ mant.id }}</td>
-                    <td>
-                        {% if mant.activo %}
-                            {{ mant.activo.placa }}
-                        {% else %}
-                            {{ mant.remolque.nombre }}
-                        {% endif %}
-                    </td>
-                    <td>
-                        {% if mant.tipo == 'preventivo' %}
-                            <span class="badge bg-success">Preventivo</span>
-                        {% else %}
-                            <span class="badge bg-danger">Correctivo</span>
-                        {% endif %}
-                    </td>
-                    <td>{{ mant.conductor|default:'-' }}</td>
-                    <td>{{ mant.fecha_entrada }}</td>
-                    <td>{{ mant.fecha_salida|default:'-' }}</td>
-                    <td>{{ mant.km_odometro|default:'-' }}</td>
-                    <td>{{ mant.costo_total|default:'-' }}</td>
-                    <td>
-                        <a href="/Mantenimiento/detalle/{{ mant.id }}/" class="btn btn-info btn-sm me-2">
-                            <i class="fas fa-eye"></i> Ver
-                        </a>
-                        <a onclick="return confirm('¿Está seguro de eliminar este mantenimiento?')"
-                           href="/Mantenimiento/eliminar/{{ mant.id }}/"
-                           class="btn btn-danger btn-sm">
-                            <i class="fas fa-trash"></i> Eliminar
-                        </a>
-                    </td>
-                </tr>
-                {% endfor %}
-            </tbody>
-        </table>
+        <div class="dt-responsive table-responsive">
+            <table class="table table-bordered table-striped table-hover" id="tbl_mantenimiento">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>UNIDAD</th>
+                        <th>TIPO</th>
+                        <th>CONDUCTOR</th>
+                        <th>FECHA ENTRADA</th>
+                        <th>FECHA SALIDA</th>
+                        <th>KM</th>
+                        <th>COSTO</th>
+                        <th>ACCIONES</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for mant in mantenimientos %}
+                    <tr>
+                        <td>{{ mant.id }}</td>
+                        <td>
+                            {% if mant.activo %}
+                                {{ mant.activo.placa }}
+                            {% else %}
+                                {{ mant.remolque.nombre }}
+                            {% endif %}
+                        </td>
+                        <td>
+                            {% if mant.tipo == 'preventivo' %}
+                                <span class="badge bg-success">Preventivo</span>
+                            {% else %}
+                                <span class="badge bg-danger">Correctivo</span>
+                            {% endif %}
+                        </td>
+                        <td>{{ mant.conductor|default:'-' }}</td>
+                        <td>{{ mant.fecha_entrada }}</td>
+                        <td>{{ mant.fecha_salida|default:'-' }}</td>
+                        <td>{{ mant.km_odometro|default:'-' }}</td>
+                        <td>{{ mant.costo_total|default:'-' }}</td>
+                        <td>
+                            <a href="/Mantenimiento/detalle/{{ mant.id }}/" class="btn btn-info btn-sm me-2">
+                                <i class="fas fa-eye"></i> Ver
+                            </a>
+                            <a onclick="return confirm('¿Está seguro de eliminar este mantenimiento?')"
+                            href="/Mantenimiento/eliminar/{{ mant.id }}/"
+                            class="btn btn-danger btn-sm">
+                                <i class="fas fa-trash"></i> Eliminar
+                            </a>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
         
     </div>
 </div>
@@ -277,17 +279,21 @@ function toggleUnidad(tipo) {
 {% block extra_js %}
 
         <script>
-                    let table = new DataTable('#tbl_mantenimiento', {
-                        language: {
-                            url: '//cdn.datatables.net/plug-ins/1.13.5/i18n/es-ES.json'
-                        },
-                        dom: 'Bfrtip',
-                        layout: {
-                            topStart: {
-                                buttons: ['copyHtml5', 'excelHtml5', 'csvHtml5', 'pdfHtml5', 'print']
-                            }
-                        }
-                    });
+            document.addEventListener("DOMContentLoaded", function () {
+                $('#tbl_mantenimiento').DataTable({
+                    language: {
+                        url: '//cdn.datatables.net/plug-ins/1.13.5/i18n/es-ES.json'
+                    },
+                    dom: 'Bfrtip',
+                    buttons: [
+                        'excelHtml5',
+                        'pdfHtml5'
+                    ],
+                    pageLength: 10,
+                    responsive: true,
+                    order: [[0, 'asc']]
+                });
+            });
         </script>
 
 {% endblock %}

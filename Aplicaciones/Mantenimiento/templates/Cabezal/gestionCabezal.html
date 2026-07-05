@@ -20,85 +20,74 @@
 
 <div class="card shadow">
     <div class="card-body">
-        <table class="table table-bordered table-striped table-hover" id="tbl_cabezales">
-            <thead>
-                <tr>
-                    <th>ID</th>
-                    <th>PLACA</th>
-                    <th>MARCA</th>
-                    <th>MODELO</th>
-                    <th>AÑO</th>
-                    <th>N° MOTOR</th>
-                    <th>N° CHASIS</th>
-                    <th>N° DISCO</th>
-                    <th>COLOR</th>
-                    <th>KM ACTUAL</th>
-                    <th>ESTADO</th>
-                    <th>ACCIONES</th>
-                </tr>
-            </thead>
-            <tbody>
-                {% for cab in cabezales %}
-                <tr>
-                    <td>{{ cab.id }}</td>
-                    <td>{{ cab.placa }}</td>
-                    <td>{{ cab.marca.nombre_marca }}</td>
-                    <td>{{ cab.modelo }}</td>
-                    <td>{{ cab.anio }}</td>
-                    <td>{{ cab.num_motor }}</td>
-                    <td>{{ cab.num_chasis }}</td>
-                    <td>{{ cab.num_disco }}</td>
-                    <td>{{ cab.color }}</td>
-                    <td>{{ cab.km_odometro_actual }}</td>
-                    <td>
-                        {% if cab.estado == 'activo' %}
-                            <span class="badge bg-success">Activo</span>
-                        {% elif cab.estado == 'mantenimiento' %}
-                            <span class="badge bg-warning">En mantenimiento</span>
-                        {% else %}
-                            <span class="badge bg-danger">Inactivo</span>
-                        {% endif %}
-                    </td>
-                    <td>
-                        <button class="btn btn-warning btn-sm me-2"
-                            data-id="{{ cab.id }}"
-                            data-placa="{{ cab.placa }}"
-                            data-marca="{{ cab.marca.id }}"
-                            data-modelo="{{ cab.modelo }}"
-                            data-anio="{{ cab.anio }}"
-                            data-motor="{{ cab.num_motor }}"
-                            data-chasis="{{ cab.num_chasis }}"
-                            data-disco="{{ cab.num_disco }}"
-                            data-color="{{ cab.color }}"
-                            data-estado="{{ cab.estado }}"
-                            data-caducidad="{{ cab.fecha_caducidad|date:'Y-m-d' }}"
-                            data-km="{{ cab.km_manual }}"
-                            onclick="abrirEditar(this)">
-                            <i class="fas fa-edit"></i> Editar
-                        </button>
-                        <a onclick="return confirm('¿Está seguro de eliminar este cabezal?')"
-                           href="/Cabezal/eliminar/{{ cab.id }}/"
-                           class="btn btn-danger btn-sm">
-                            <i class="fas fa-trash"></i> Eliminar
-                        </a>
-                    </td>
-                </tr>
-                {% endfor %}
-            </tbody>
-        </table>
-        <script>
-            let table = new DataTable('#tbl_cabezales', {
-                language: {
-                    url: '//cdn.datatables.net/plug-ins/1.13.5/i18n/es-ES.json'
-                },
-                dom: 'Bfrtip',
-                layout: {
-                    topStart: {
-                        buttons: ['copyHtml5', 'excelHtml5', 'csvHtml5', 'pdfHtml5', 'print']
-                    }
-                }
-            });
-        </script>
+        <div class="dt-responsive table-responsive">
+            <table class="table table-bordered table-striped table-hover" id="tbl_cabezales">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>PLACA</th>
+                        <th>MARCA</th>
+                        <th>MODELO</th>
+                        <th>AÑO</th>
+                        <th>N° MOTOR</th>
+                        <th>N° CHASIS</th>
+                        <th>N° DISCO</th>
+                        <th>COLOR</th>
+                        <th>KM ACTUAL</th>
+                        <th>ESTADO</th>
+                        <th>ACCIONES</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for cab in cabezales %}
+                    <tr>
+                        <td>{{ cab.id }}</td>
+                        <td>{{ cab.placa }}</td>
+                        <td>{{ cab.marca.nombre_marca }}</td>
+                        <td>{{ cab.modelo }}</td>
+                        <td>{{ cab.anio }}</td>
+                        <td>{{ cab.num_motor }}</td>
+                        <td>{{ cab.num_chasis }}</td>
+                        <td>{{ cab.num_disco }}</td>
+                        <td>{{ cab.color }}</td>
+                        <td>{{ cab.km_odometro_actual }}</td>
+                        <td>
+                            {% if cab.estado == 'activo' %}
+                                <span class="badge bg-success">Activo</span>
+                            {% elif cab.estado == 'mantenimiento' %}
+                                <span class="badge bg-warning">En mantenimiento</span>
+                            {% else %}
+                                <span class="badge bg-danger">Inactivo</span>
+                            {% endif %}
+                        </td>
+                        <td>
+                            <button class="btn btn-warning btn-sm me-2"
+                                data-id="{{ cab.id }}"
+                                data-placa="{{ cab.placa }}"
+                                data-marca="{{ cab.marca.id }}"
+                                data-modelo="{{ cab.modelo }}"
+                                data-anio="{{ cab.anio }}"
+                                data-motor="{{ cab.num_motor }}"
+                                data-chasis="{{ cab.num_chasis }}"
+                                data-disco="{{ cab.num_disco }}"
+                                data-color="{{ cab.color }}"
+                                data-estado="{{ cab.estado }}"
+                                data-caducidad="{{ cab.fecha_caducidad|date:'Y-m-d' }}"
+                                data-km="{{ cab.km_manual }}"
+                                onclick="abrirEditar(this)">
+                                <i class="fas fa-edit"></i> Editar
+                            </button>
+                            <a onclick="return confirm('¿Está seguro de eliminar este cabezal?')"
+                            href="/Cabezal/eliminar/{{ cab.id }}/"
+                            class="btn btn-danger btn-sm">
+                                <i class="fas fa-trash"></i> Eliminar
+                            </a>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
     </div>
 </div>
 
@@ -264,6 +253,23 @@ function abrirEditar(btn) {
     document.getElementById('edit_caducidad').value = btn.dataset.caducidad;
     new bootstrap.Modal(document.getElementById('modalEditarCabezal')).show();
 }
+
+
+document.addEventListener("DOMContentLoaded", function () {
+    $('#tbl_cabezales').DataTable({
+        language: {
+            url: '//cdn.datatables.net/plug-ins/1.13.5/i18n/es-ES.json'
+        },
+        dom: 'Bfrtip',
+        buttons: [
+            'excelHtml5',
+            'pdfHtml5'
+        ],
+        pageLength: 10,
+        responsive: true,
+        order: [[0, 'asc']]
+    });
+});
 </script>
 
 {% endblock %}

@@ -20,64 +20,54 @@
 
 <div class="card shadow">
     <div class="card-body">
-        <table class="table table-bordered table-striped table-hover" id="tbl_trabajos">
-            <thead>
-                <tr>
-                    <th>ID</th>
-                    <th>NOMBRE</th>
-                    <th>APLICA A</th>
-                    <th>TIPO CONTROL</th>
-                    <th>DESCRIPCIÓN</th>
-                    <th>ACCIONES</th>
-                </tr>
-            </thead>
-            <tbody>
-                {% for trabajo in trabajos %}
-                <tr>
-                    <td>{{ trabajo.id }}</td>
-                    <td>{{ trabajo.nombre }}</td>
-                    <td>{{ trabajo.get_aplica_a_display }}</td>
-                    <td>
-                        {% if trabajo.tipo_control == 'km' %}
-                            <span class="badge bg-primary">Por km</span>
-                        {% else %}
-                            <span class="badge bg-secondary">Libre</span>
-                        {% endif %}
-                    </td>
-                    <td>{{ trabajo.descripcion|default:'-' }}</td>
-                    <td>
-                        <button class="btn btn-warning btn-sm me-2"
-                            data-id="{{ trabajo.id }}"
-                            data-nombre="{{ trabajo.nombre }}"
-                            data-descripcion="{{ trabajo.descripcion|default:'' }}"
-                            data-aplica="{{ trabajo.aplica_a }}"
-                            data-control="{{ trabajo.tipo_control }}"
-                            onclick="abrirEditar(this)">
-                            <i class="fas fa-edit"></i> Editar
-                        </button>
-                        <a onclick="return confirm('¿Está seguro de eliminar este tipo de trabajo?')"
-                           href="/TipoTrabajo/eliminar/{{ trabajo.id }}/"
-                           class="btn btn-danger btn-sm">
-                            <i class="fas fa-trash"></i> Eliminar
-                        </a>
-                    </td>
-                </tr>
-                {% endfor %}
-            </tbody>
-        </table>
-        <script>
-            let table = new DataTable('#tbl_trabajos', {
-                language: {
-                    url: '//cdn.datatables.net/plug-ins/1.13.5/i18n/es-ES.json'
-                },
-                dom: 'Bfrtip',
-                layout: {
-                    topStart: {
-                        buttons: ['copyHtml5', 'excelHtml5', 'csvHtml5', 'pdfHtml5', 'print']
-                    }
-                }
-            });
-        </script>
+        <div class="dt-responsive table-responsive">
+            <table class="table table-bordered table-striped table-hover" id="tbl_trabajos">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>NOMBRE</th>
+                        <th>APLICA A</th>
+                        <th>TIPO CONTROL</th>
+                        <th>DESCRIPCIÓN</th>
+                        <th>ACCIONES</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for trabajo in trabajos %}
+                    <tr>
+                        <td>{{ trabajo.id }}</td>
+                        <td>{{ trabajo.nombre }}</td>
+                        <td>{{ trabajo.get_aplica_a_display }}</td>
+                        <td>
+                            {% if trabajo.tipo_control == 'km' %}
+                                <span class="badge bg-primary">Por km</span>
+                            {% else %}
+                                <span class="badge bg-secondary">Libre</span>
+                            {% endif %}
+                        </td>
+                        <td>{{ trabajo.descripcion|default:'-' }}</td>
+                        <td>
+                            <button class="btn btn-warning btn-sm me-2"
+                                data-id="{{ trabajo.id }}"
+                                data-nombre="{{ trabajo.nombre }}"
+                                data-descripcion="{{ trabajo.descripcion|default:'' }}"
+                                data-aplica="{{ trabajo.aplica_a }}"
+                                data-control="{{ trabajo.tipo_control }}"
+                                onclick="abrirEditar(this)">
+                                <i class="fas fa-edit"></i> Editar
+                            </button>
+                            <a onclick="return confirm('¿Está seguro de eliminar este tipo de trabajo?')"
+                            href="/TipoTrabajo/eliminar/{{ trabajo.id }}/"
+                            class="btn btn-danger btn-sm">
+                                <i class="fas fa-trash"></i> Eliminar
+                            </a>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+
     </div>
 </div>
 
@@ -185,6 +175,23 @@ function abrirEditar(btn) {
     document.getElementById('edit_descripcion').value = btn.dataset.descripcion;
     new bootstrap.Modal(document.getElementById('modalEditarTrabajo')).show();
 }
+
+document.addEventListener("DOMContentLoaded", function () {
+    $('#tbl_trabajos').DataTable({
+        language: {
+            url: '//cdn.datatables.net/plug-ins/1.13.5/i18n/es-ES.json'
+        },
+        dom: 'Bfrtip',
+        buttons: [
+            'excelHtml5',
+            'pdfHtml5'
+        ],
+        pageLength: 10,
+        responsive: true,
+        order: [[0, 'asc']]
+    });
+});
+</script>
 </script>
 
 {% endblock %}

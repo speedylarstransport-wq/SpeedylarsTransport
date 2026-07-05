@@ -3,7 +3,7 @@
 {% block contenido %}
 <br>
 <div class="d-flex justify-content-between align-items-center mb-3">
-    <h3>GESTIÓN DE CONDUCTORES</h3>
+    <h3><i class="fas fa-users me-2"></i>GESTIÓN DE CONDUCTORES</h3>
     <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#modalNuevoConductor">
         <i class="fas fa-plus"></i> Nuevo Conductor
     </button>
@@ -20,65 +20,51 @@
 
 <div class="card shadow">
     <div class="card-body">
-        <table class="table table-bordered table-striped table-hover" id="tbl_conductores">
-            <thead>
-                <tr>
-                    <th>ID</th>
-                    <th>NOMBRES</th>
-                    <th>APELLIDOS</th>
-                    <th>CÉDULA</th>
-                    <th>LICENCIA</th>
-                    <th>TELÉFONO</th>
-                    <th>ACCIONES</th>
-                </tr>
-            </thead>
-            <tbody>
-                {% for conductor in conductores %}
-                <tr>
-                    <td>{{ conductor.id_cond }}</td>
-                    <td>{{ conductor.nombres_cond }}</td>
-                    <td>{{ conductor.apell_cond }}</td>
-                    <td>{{ conductor.cedula_cond }}</td>
-                    <td>{{ conductor.tipolicen_cond }}</td>
-                    <td>{{ conductor.telfno_cond }}</td>
-                    <td>
-                        
-                            <button class="btn btn-warning btn-sm me-2"
-                                data-id="{{ conductor.id }}"
-                                data-nombres="{{ conductor.nombres_cond }}"
-                                data-apellidos="{{ conductor.apell_cond }}"
-                                data-cedula="{{ conductor.cedula_cond }}"
-                                data-licencia="{{ conductor.tipolicen_cond }}"
-                                data-telefono="{{ conductor.telfno_cond }}"
-                                onclick="abrirEditar(this)">
-                                <i class="fas fa-edit"></i> Editar
-                            </button>
-                            <a onclick="return confirm('¿Está seguro de eliminar este conductor?')"
-                            href="/Conductor/eliminar/{{ conductor.id }}/"
-                            class="btn btn-danger btn-sm">
-                                <i class="fas fa-trash"></i> Eliminar
-                            </a>
-                        
-                    </td>
-                </tr>
-                {% endfor %}
-            </tbody>
-        </table>
-
-        <script>
-            let table = new DataTable('#tbl_conductores', {
-                language: {
-                    url: '//cdn.datatables.net/plug-ins/1.13.5/i18n/es-ES.json'
-                },
-                dom: 'Bfrtip',
-                buttons: ['copy', 'excel', 'csv', 'pdf', 'print'],
-                layout: {
-                    topStart: {
-                        buttons: ['copyHtml5', 'excelHtml5', 'csvHtml5', 'pdfHtml5', 'print']
-                    }
-                }
-            });
-        </script>
+        <div class="dt-responsive table-responsive">
+            <table class="table table-bordered table-striped table-hover" id="tbl_conductores">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>NOMBRES</th>
+                        <th>APELLIDOS</th>
+                        <th>CÉDULA</th>
+                        <th class="text-center">LICENCIA</th>
+                        <th>TELÉFONO</th>
+                        <th class="text-center">ACCIONES</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for conductor in conductores %}
+                    <tr>
+                        <td>{{ conductor.id_cond }}</td>
+                        <td>{{ conductor.nombres_cond }}</td>
+                        <td>{{ conductor.apell_cond }}</td>
+                        <td>{{ conductor.cedula_cond }}</td>
+                        <td>{{ conductor.tipolicen_cond }}</td>
+                        <td>{{ conductor.telfno_cond }}</td>
+                        <td>
+                            
+                                <button class="btn btn-warning btn-sm me-2"
+                                    data-id="{{ conductor.id }}"
+                                    data-nombres="{{ conductor.nombres_cond }}"
+                                    data-apellidos="{{ conductor.apell_cond }}"
+                                    data-cedula="{{ conductor.cedula_cond }}"
+                                    data-licencia="{{ conductor.tipolicen_cond }}"
+                                    data-telefono="{{ conductor.telfno_cond }}"
+                                    onclick="abrirEditar(this)">
+                                    <i class="fas fa-edit"></i> Editar
+                                </button>
+                                <a onclick="return confirm('¿Está seguro de eliminar este conductor?')"
+                                href="/Conductor/eliminar/{{ conductor.id }}/"                           class="btn btn-danger btn-sm">
+                                    <i class="fas fa-trash"></i> Eliminar
+                                </a>
+                            
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
     </div>
 </div>
 
@@ -187,6 +173,25 @@ function abrirEditar(btn) {
     document.getElementById('edit_telefono').value = btn.dataset.telefono;
     new bootstrap.Modal(document.getElementById('modalEditarConductor')).show();
 }
+
+document.addEventListener("DOMContentLoaded", function () {
+    $('#tbl_conductores').DataTable({
+        language: {
+            url: '//cdn.datatables.net/plug-ins/1.13.5/i18n/es-ES.json'
+        },
+        dom: 'Bfrtip',
+        buttons: [
+            'copyHtml5',
+            'excelHtml5',
+            'csvHtml5',
+            'pdfHtml5',
+            'print'
+        ],
+        pageLength: 10,
+        responsive: true,
+        order: [[0, 'asc']]
+    });
+});
 </script>
 
 {% endblock %}
