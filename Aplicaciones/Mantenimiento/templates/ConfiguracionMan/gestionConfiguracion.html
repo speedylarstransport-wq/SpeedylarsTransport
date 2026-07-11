@@ -70,7 +70,7 @@
                 <h5 class="modal-title">NUEVA CONFIGURACIÓN</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
             </div>
-            <form action="/ConfiguracionMan/guardar/" method="POST">
+            <form action="/ConfiguracionMan/guardar/" method="POST" class="needs-validation" novalidate>
                 {% csrf_token %}
                 <div class="modal-body">
                     <div class="mb-3">
@@ -81,6 +81,9 @@
                             <option value="{{ marca.id }}">{{ marca.nombre_marca }}</option>
                             {% endfor %}
                         </select>
+                        <div class="invalid-feedback">
+                            Seleccione una marca.
+                        </div>
                     </div>
                     <div class="mb-3">
                         <label class="form-label"><b>TRABAJO:</b></label>
@@ -90,10 +93,16 @@
                             <option value="{{ trabajo.id }}">{{ trabajo.nombre }}</option>
                             {% endfor %}
                         </select>
+                        <div class="invalid-feedback">
+                            Seleccione un trabajo.
+                        </div>
                     </div>
                     <div class="mb-3">
                         <label class="form-label"><b>INTERVALO (KM):</b></label>
-                        <input type="number" name="km_intervalo" class="form-control" required>
+                        <input type="number" name="km_intervalo" class="form-control" min="1" step="1" required>
+                        <div class="invalid-feedback">
+                            Ingrese un intervalo en km mayor a 0.
+                        </div>
                     </div>
                 </div>
                 <div class="modal-footer">
@@ -113,7 +122,7 @@
                 <h5 class="modal-title">EDITAR CONFIGURACIÓN</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
             </div>
-            <form action="/ConfiguracionMan/procesarEdicion/" method="POST">
+            <form action="/ConfiguracionMan/procesarEdicion/" method="POST" class="needs-validation" novalidate>
                 {% csrf_token %}
                 <input type="hidden" name="id_config" id="edit_id_config">
                 <div class="modal-body">
@@ -125,6 +134,9 @@
                             <option value="{{ marca.id }}">{{ marca.nombre_marca }}</option>
                             {% endfor %}
                         </select>
+                        <div class="invalid-feedback">
+                            Seleccione una marca.
+                        </div>
                     </div>
                     <div class="mb-3">
                         <label class="form-label"><b>TRABAJO:</b></label>
@@ -134,10 +146,16 @@
                             <option value="{{ trabajo.id }}">{{ trabajo.nombre }}</option>
                             {% endfor %}
                         </select>
+                        <div class="invalid-feedback">
+                            Seleccione un trabajo.
+                        </div>
                     </div>
                     <div class="mb-3">
                         <label class="form-label"><b>INTERVALO (KM):</b></label>
-                        <input type="number" name="km_intervalo" id="edit_km" class="form-control" required>
+                        <input type="number" name="km_intervalo" id="edit_km" class="form-control" min="1" step="1" required>
+                        <div class="invalid-feedback">
+                            Ingrese un intervalo en km mayor a 0.
+                        </div>
                     </div>
                 </div>
                 <div class="modal-footer">
@@ -157,6 +175,21 @@ function abrirEditar(btn) {
     document.getElementById('edit_km').value = btn.dataset.km;
     new bootstrap.Modal(document.getElementById('modalEditarConfig')).show();
 }
+
+// Validación estilo Bootstrap (mensajes en rojo en vez del globito del navegador)
+(function () {
+    'use strict';
+    const forms = document.querySelectorAll('.needs-validation');
+    Array.from(forms).forEach(form => {
+        form.addEventListener('submit', event => {
+            if (!form.checkValidity()) {
+                event.preventDefault();
+                event.stopPropagation();
+            }
+            form.classList.add('was-validated');
+        }, false);
+    });
+})();
 
 document.addEventListener("DOMContentLoaded", function () {
     $('#tbl_config').DataTable({

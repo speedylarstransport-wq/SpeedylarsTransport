@@ -64,12 +64,16 @@
                 <h5 class="modal-title">NUEVA MARCA</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
             </div>
-            <form action="/Marca/guardar/" method="POST">
+            <form action="/Marca/guardar/" method="POST" class="needs-validation" novalidate>
                 {% csrf_token %}
                 <div class="modal-body">
                     <div class="mb-3">
                         <label class="form-label"><b>NOMBRE DE LA MARCA:</b></label>
-                        <input type="text" name="nombre_marca" class="form-control" required>
+                        <input type="text" name="nombre_marca" class="form-control"
+                            minlength="2" maxlength="100" required>
+                        <div class="invalid-feedback">
+                            Ingrese el nombre de la marca (mínimo 2 caracteres).
+                        </div>
                     </div>
                 </div>
                 <div class="modal-footer">
@@ -89,13 +93,17 @@
                 <h5 class="modal-title">EDITAR MARCA</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
             </div>
-            <form action="/Marca/procesarEdicion/" method="POST">
+            <form action="/Marca/procesarEdicion/" method="POST" class="needs-validation" novalidate>
                 {% csrf_token %}
                 <input type="hidden" name="id_marca" id="edit_id_marca">
                 <div class="modal-body">
                     <div class="mb-3">
                         <label class="form-label"><b>NOMBRE DE LA MARCA:</b></label>
-                        <input type="text" name="nombre_marca" id="edit_nombre_marca" class="form-control" required>
+                        <input type="text" name="nombre_marca" id="edit_nombre_marca" class="form-control"
+                            minlength="2" maxlength="100" required>
+                        <div class="invalid-feedback">
+                            Ingrese el nombre de la marca (mínimo 2 caracteres).
+                        </div>
                     </div>
                 </div>
                 <div class="modal-footer">
@@ -114,8 +122,20 @@ function abrirEditar(btn) {
     new bootstrap.Modal(document.getElementById('modalEditarMarca')).show();
 }
 
-
-
+// Validación estilo Bootstrap (mensajes en rojo en vez del globito del navegador)
+(function () {
+    'use strict';
+    const forms = document.querySelectorAll('.needs-validation');
+    Array.from(forms).forEach(form => {
+        form.addEventListener('submit', event => {
+            if (!form.checkValidity()) {
+                event.preventDefault();
+                event.stopPropagation();
+            }
+            form.classList.add('was-validated');
+        }, false);
+    });
+})();
 
 document.addEventListener("DOMContentLoaded", function () {
     $('#tbl_marcas').DataTable({

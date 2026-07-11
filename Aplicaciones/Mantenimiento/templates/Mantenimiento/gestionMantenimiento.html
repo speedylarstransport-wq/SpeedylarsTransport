@@ -85,7 +85,7 @@
                 <h5 class="modal-title">NUEVO MANTENIMIENTO</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
             </div>
-            <form action="/Mantenimiento/guardar/" method="POST">
+            <form action="/Mantenimiento/guardar/" method="POST" id="formMantenimiento" class="needs-validation" novalidate>
                 {% csrf_token %}
                 <div class="modal-body">
                     <div class="row">
@@ -93,11 +93,14 @@
                         <!-- Tipo de unidad -->
                         <div class="col-md-12 mb-3">
                             <label class="form-label"><b>TIPO DE UNIDAD:</b></label>
-                            <select id="tipo_unidad" class="form-select" onchange="toggleUnidad(this.value)">
+                            <select id="tipo_unidad" class="form-select" onchange="toggleUnidad(this.value)" required>
                                 <option value="">-- Seleccione --</option>
                                 <option value="cabezal">Cabezal</option>
                                 <option value="remolque">Remolque</option>
                             </select>
+                            <div class="invalid-feedback">
+                                Seleccione el tipo de unidad.
+                            </div>
                         </div>
 
                         <!-- Cabezal -->
@@ -109,6 +112,9 @@
                                 <option value="{{ cab.id }}">{{ cab.placa }} - {{ cab.marca.nombre_marca }}</option>
                                 {% endfor %}
                             </select>
+                            <div class="invalid-feedback">
+                                Seleccione el cabezal.
+                            </div>
                         </div>
 
                         <!-- Remolque -->
@@ -120,11 +126,14 @@
                                 <option value="{{ rem.id }}">{{ rem.nombre }} ({{ rem.get_tipo_display }})</option>
                                 {% endfor %}
                             </select>
+                            <div class="invalid-feedback">
+                                Seleccione el remolque.
+                            </div>
                         </div>
 
                         <!-- Cabezal de referencia -->
                         <div class="col-md-6 mb-3" id="div_cabezal_ref" style="display:none">
-                            <label class="form-label"><b>CABEZAL AL QUE ESTABA ENGANCHADO:</b></label>
+                            <label class="form-label"><b>CABEZAL AL QUE ESTABA ENGANCHADO:</b> <small class="text-muted">(opcional)</small></label>
                             <select name="cabezal_ref_id" class="form-select">
                                 <option value="">-- Opcional --</option>
                                 {% for cab in cabezales %}
@@ -135,12 +144,15 @@
 
                         <div class="col-md-6 mb-3">
                             <label class="form-label"><b>CONDUCTOR:</b></label>
-                            <select name="conductor_id" class="form-select">
+                            <select name="conductor_id" class="form-select" required>
                                 <option value="">-- Seleccione --</option>
                                 {% for conductor in conductores %}
                                 <option value="{{ conductor.id }}">{{ conductor.nombres_cond }} {{ conductor.apell_cond }}</option>
                                 {% endfor %}
                             </select>
+                            <div class="invalid-feedback">
+                                Seleccione un conductor.
+                            </div>
                         </div>
 
                         <div class="col-md-6 mb-3">
@@ -150,36 +162,45 @@
                                 <option value="preventivo">Preventivo</option>
                                 <option value="correctivo">Correctivo</option>
                             </select>
+                            <div class="invalid-feedback">
+                                Seleccione el tipo de mantenimiento.
+                            </div>
                         </div>
 
                         <div class="col-md-6 mb-3">
                             <label class="form-label"><b>FECHA ENTRADA:</b></label>
                             <input type="date" name="fecha_entrada" class="form-control" required>
+                            <div class="invalid-feedback">
+                                Ingrese la fecha de entrada.
+                            </div>
                         </div>
 
                         <div class="col-md-6 mb-3">
-                            <label class="form-label"><b>FECHA SALIDA:</b></label>
+                            <label class="form-label"><b>FECHA SALIDA:</b> <small class="text-muted"></small></label>
                             <input type="date" name="fecha_salida" class="form-control">
                         </div>
 
                         <div class="col-md-6 mb-3" id="div_km" style="display:none">
                             <label class="form-label"><b>KM ODÓMETRO:</b></label>
-                            <input type="number" name="km_odometro" class="form-control">
+                            <input type="number" name="km_odometro" id="input_km" class="form-control" min="0">
+                            <div class="invalid-feedback">
+                                Ingrese el km del odómetro.
+                            </div>
                         </div>
 
                         <div class="col-md-6 mb-3">
-                            <label class="form-label"><b>COSTO TOTAL:</b></label>
-                            <input type="number" name="costo_total" class="form-control" step="0.01">
+                            <label class="form-label"><b>COSTO TOTAL:</b> <small class="text-muted"></small></label>
+                            <input type="number" name="costo_total" class="form-control" step="0.01" min="0">
                         </div>
 
                         <div class="col-md-6 mb-3">
-                            <label class="form-label"><b>FECHA DE PAGO:</b></label>
+                            <label class="form-label"><b>FECHA DE PAGO:</b> <small class="text-muted"></small></label>
                             <input type="date" name="fecha_pago" class="form-control">
                         </div>
 
                         <div class="col-md-12 mb-3">
-                            <label class="form-label"><b>OBSERVACIONES:</b></label>
-                            <textarea name="observaciones" class="form-control" rows="2"></textarea>
+                            <label class="form-label"><b>OBSERVACIONES:</b> <small class="text-muted">(opcional)</small></label>
+                            <textarea name="observaciones" class="form-control" rows="2" maxlength="500"></textarea>
                         </div>
 
                         <!-- SECCIÓN DE TRABAJOS -->
@@ -191,11 +212,14 @@
                                     <i class="fas fa-plus"></i> Agregar Trabajo
                                 </button>
                             </div>
+                            <div id="alerta_sin_trabajos" class="alert alert-warning py-2 d-none">
+                                Debe agregar al menos un trabajo realizado.
+                            </div>
                             <table class="table table-bordered table-sm" id="tbl_trabajos_form">
                                 <thead class="table-light">
                                     <tr>
                                         <th>TRABAJO</th>
-                                        <th>OBSERVACIÓN</th>
+                                        <th>OBSERVACIÓN <small class="text-muted">(opcional)</small></th>
                                         <th></th>
                                     </tr>
                                 </thead>
@@ -242,9 +266,10 @@ function agregarTrabajo() {
             <select name="trabajo_id[]" class="form-select form-select-sm" required>
                 ${opcionesTrabajos}
             </select>
+            <div class="invalid-feedback">Seleccione un trabajo.</div>
         </td>
         <td>
-            <input type="text" name="trabajo_observacion[]" class="form-control form-control-sm">
+            <input type="text" name="trabajo_observacion[]" class="form-control form-control-sm" maxlength="200">
         </td>
         <td>
             <button type="button" class="btn btn-danger btn-sm" onclick="eliminarFila('fila_trabajo_${contadorTrabajo}')">
@@ -253,6 +278,7 @@ function agregarTrabajo() {
         </td>
     `;
     tbody.appendChild(fila);
+    document.getElementById('alerta_sin_trabajos').classList.add('d-none');
 }
 
 function eliminarFila(id) {
@@ -265,14 +291,48 @@ function toggleUnidad(tipo) {
     document.getElementById('div_cabezal_ref').style.display = 'none';
     document.getElementById('div_km').style.display = 'none';
 
+    const selCabezal = document.getElementById('sel_cabezal');
+    const selRemolque = document.getElementById('sel_remolque');
+    const inputKm = document.getElementById('input_km');
+
+    selCabezal.required = false;
+    selRemolque.required = false;
+    inputKm.required = false;
+
     if (tipo === 'cabezal') {
         document.getElementById('div_cabezal').style.display = 'block';
         document.getElementById('div_km').style.display = 'block';
+        selCabezal.required = true;
+        inputKm.required = true;
     } else if (tipo === 'remolque') {
         document.getElementById('div_remolque').style.display = 'block';
         document.getElementById('div_cabezal_ref').style.display = 'block';
+        selRemolque.required = true;
     }
 }
+
+// Validación estilo Bootstrap + al menos un trabajo agregado
+(function () {
+    'use strict';
+    const form = document.getElementById('formMantenimiento');
+    form.addEventListener('submit', event => {
+        let valido = form.checkValidity();
+
+        const filasTrabajo = document.querySelectorAll('#tbody_trabajos tr');
+        if (filasTrabajo.length === 0) {
+            document.getElementById('alerta_sin_trabajos').classList.remove('d-none');
+            valido = false;
+        } else {
+            document.getElementById('alerta_sin_trabajos').classList.add('d-none');
+        }
+
+        if (!valido) {
+            event.preventDefault();
+            event.stopPropagation();
+        }
+        form.classList.add('was-validated');
+    }, false);
+})();
 </script>
 
 {% endblock %}

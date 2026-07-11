@@ -79,12 +79,15 @@
                 <h5 class="modal-title">NUEVO TIPO DE TRABAJO</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
             </div>
-            <form action="/TipoTrabajo/guardar/" method="POST">
+            <form action="/TipoTrabajo/guardar/" method="POST" class="needs-validation" novalidate>
                 {% csrf_token %}
                 <div class="modal-body">
                     <div class="mb-3">
                         <label class="form-label"><b>NOMBRE:</b></label>
-                        <input type="text" name="nombre" class="form-control" required>
+                        <input type="text" name="nombre" class="form-control" minlength="2" maxlength="150" required>
+                        <div class="invalid-feedback">
+                            Ingrese el nombre del tipo de trabajo (mínimo 2 caracteres).
+                        </div>
                     </div>
                     <div class="mb-3">
                         <label class="form-label"><b>APLICA A:</b></label>
@@ -95,6 +98,9 @@
                             <option value="plataforma">Plataforma</option>
                             <option value="ambos">Todos</option>
                         </select>
+                        <div class="invalid-feedback">
+                            Seleccione a qué aplica este tipo de trabajo.
+                        </div>
                     </div>
                     <div class="mb-3">
                         <label class="form-label"><b>TIPO DE CONTROL:</b></label>
@@ -103,10 +109,13 @@
                             <option value="km">Por kilometraje</option>
                             <option value="libre">Libre</option>
                         </select>
+                        <div class="invalid-feedback">
+                            Seleccione un tipo de control.
+                        </div>
                     </div>
                     <div class="mb-3">
-                        <label class="form-label"><b>DESCRIPCIÓN:</b></label>
-                        <textarea name="descripcion" class="form-control" rows="2"></textarea>
+                        <label class="form-label"><b>DESCRIPCIÓN:</b> <small class="text-muted">(opcional)</small></label>
+                        <textarea name="descripcion" class="form-control" rows="2" maxlength="500"></textarea>
                     </div>
                 </div>
                 <div class="modal-footer">
@@ -126,13 +135,16 @@
                 <h5 class="modal-title">EDITAR TIPO DE TRABAJO</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
             </div>
-            <form action="/TipoTrabajo/procesarEdicion/" method="POST">
+            <form action="/TipoTrabajo/procesarEdicion/" method="POST" class="needs-validation" novalidate>
                 {% csrf_token %}
                 <input type="hidden" name="id_trabajo" id="edit_id_trabajo">
                 <div class="modal-body">
                     <div class="mb-3">
                         <label class="form-label"><b>NOMBRE:</b></label>
-                        <input type="text" name="nombre" id="edit_nombre" class="form-control" required>
+                        <input type="text" name="nombre" id="edit_nombre" class="form-control" minlength="2" maxlength="150" required>
+                        <div class="invalid-feedback">
+                            Ingrese el nombre del tipo de trabajo (mínimo 2 caracteres).
+                        </div>
                     </div>
                     <div class="mb-3">
                         <label class="form-label"><b>APLICA A:</b></label>
@@ -143,6 +155,9 @@
                             <option value="plataforma">Plataforma</option>
                             <option value="ambos">Todos</option>
                         </select>
+                        <div class="invalid-feedback">
+                            Seleccione a qué aplica este tipo de trabajo.
+                        </div>
                     </div>
                     <div class="mb-3">
                         <label class="form-label"><b>TIPO DE CONTROL:</b></label>
@@ -151,10 +166,13 @@
                             <option value="km">Por kilometraje</option>
                             <option value="libre">Libre</option>
                         </select>
+                        <div class="invalid-feedback">
+                            Seleccione un tipo de control.
+                        </div>
                     </div>
                     <div class="mb-3">
-                        <label class="form-label"><b>DESCRIPCIÓN:</b></label>
-                        <textarea name="descripcion" id="edit_descripcion" class="form-control" rows="2"></textarea>
+                        <label class="form-label"><b>DESCRIPCIÓN:</b> <small class="text-muted">(opcional)</small></label>
+                        <textarea name="descripcion" id="edit_descripcion" class="form-control" rows="2" maxlength="500"></textarea>
                     </div>
                 </div>
                 <div class="modal-footer">
@@ -176,6 +194,21 @@ function abrirEditar(btn) {
     new bootstrap.Modal(document.getElementById('modalEditarTrabajo')).show();
 }
 
+// Validación estilo Bootstrap (mensajes en rojo en vez del globito del navegador)
+(function () {
+    'use strict';
+    const forms = document.querySelectorAll('.needs-validation');
+    Array.from(forms).forEach(form => {
+        form.addEventListener('submit', event => {
+            if (!form.checkValidity()) {
+                event.preventDefault();
+                event.stopPropagation();
+            }
+            form.classList.add('was-validated');
+        }, false);
+    });
+})();
+
 document.addEventListener("DOMContentLoaded", function () {
     $('#tbl_trabajos').DataTable({
         language: {
@@ -191,7 +224,6 @@ document.addEventListener("DOMContentLoaded", function () {
         order: [[0, 'asc']]
     });
 });
-</script>
 </script>
 
 {% endblock %}

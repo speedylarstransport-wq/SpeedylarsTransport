@@ -69,7 +69,7 @@
                 <h5 class="modal-title">NUEVA CARGA DE COMBUSTIBLE</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
             </div>
-            <form action="/Combustible/guardar/" method="POST">
+            <form action="/Combustible/guardar/" method="POST" class="needs-validation" novalidate>
                 {% csrf_token %}
                 <div class="modal-body">
                     <div class="mb-3">
@@ -80,26 +80,41 @@
                             <option value="{{ cab.id }}">{{ cab.placa }} - {{ cab.marca.nombre_marca }}</option>
                             {% endfor %}
                         </select>
+                        <div class="invalid-feedback">
+                            Seleccione un cabezal.
+                        </div>
                     </div>
                     <div class="mb-3">
                         <label class="form-label"><b>FECHA:</b></label>
                         <input type="date" name="fecha" class="form-control" required>
+                        <div class="invalid-feedback">
+                            Ingrese la fecha de la carga.
+                        </div>
                     </div>
                     <div class="mb-3">
                         <label class="form-label"><b>KM ODÓMETRO:</b></label>
-                        <input type="number" name="km_odometro" class="form-control" step="0.01" required>
+                        <input type="number" name="km_odometro" class="form-control" step="0.01" min="0" required>
+                        <div class="invalid-feedback">
+                            Ingrese el km del odómetro.
+                        </div>
                     </div>
                     <div class="mb-3">
                         <label class="form-label"><b>LITROS:</b></label>
-                        <input type="number" name="litros" class="form-control" step="0.01" required>
+                        <input type="number" name="litros" class="form-control" step="0.01" min="0.01" required>
+                        <div class="invalid-feedback">
+                            Ingrese la cantidad de litros (mayor a 0).
+                        </div>
                     </div>
                     <div class="mb-3">
                         <label class="form-label"><b>COSTO TOTAL:</b></label>
-                        <input type="number" name="costo_total" class="form-control" step="0.01" required>
+                        <input type="number" name="costo_total" class="form-control" step="0.01" min="0.01" required>
+                        <div class="invalid-feedback">
+                            Ingrese el costo total (mayor a 0).
+                        </div>
                     </div>
                     <div class="mb-3">
-                        <label class="form-label"><b>OBSERVACIONES:</b></label>
-                        <textarea name="observaciones" class="form-control" rows="2"></textarea>
+                        <label class="form-label"><b>OBSERVACIONES:</b> <small class="text-muted">(opcional)</small></label>
+                        <textarea name="observaciones" class="form-control" rows="2" maxlength="500"></textarea>
                     </div>
                 </div>
                 <div class="modal-footer">
@@ -115,6 +130,21 @@
 
 {% block extra_js %}
 <script>
+// Validación estilo Bootstrap (mensajes en rojo en vez del globito del navegador)
+(function () {
+    'use strict';
+    const forms = document.querySelectorAll('.needs-validation');
+    Array.from(forms).forEach(form => {
+        form.addEventListener('submit', event => {
+            if (!form.checkValidity()) {
+                event.preventDefault();
+                event.stopPropagation();
+            }
+            form.classList.add('was-validated');
+        }, false);
+    });
+})();
+
 document.addEventListener("DOMContentLoaded", function () {
     $('#tbl_combustible').DataTable({
         language: {

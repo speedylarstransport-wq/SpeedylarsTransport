@@ -43,22 +43,20 @@
                         <td>{{ conductor.tipolicen_cond }}</td>
                         <td>{{ conductor.telfno_cond }}</td>
                         <td>
-                            
-                                <button class="btn btn-warning btn-sm me-2"
-                                    data-id="{{ conductor.id }}"
-                                    data-nombres="{{ conductor.nombres_cond }}"
-                                    data-apellidos="{{ conductor.apell_cond }}"
-                                    data-cedula="{{ conductor.cedula_cond }}"
-                                    data-licencia="{{ conductor.tipolicen_cond }}"
-                                    data-telefono="{{ conductor.telfno_cond }}"
-                                    onclick="abrirEditar(this)">
-                                    <i class="fas fa-edit"></i> Editar
-                                </button>
-                                <a onclick="return confirm('¿Está seguro de eliminar este conductor?')"
-                                href="/Conductor/eliminar/{{ conductor.id }}/"                           class="btn btn-danger btn-sm">
-                                    <i class="fas fa-trash"></i> Eliminar
-                                </a>
-                            
+                            <button class="btn btn-warning btn-sm me-2"
+                                data-id="{{ conductor.id }}"
+                                data-nombres="{{ conductor.nombres_cond }}"
+                                data-apellidos="{{ conductor.apell_cond }}"
+                                data-cedula="{{ conductor.cedula_cond }}"
+                                data-licencia="{{ conductor.tipolicen_cond }}"
+                                data-telefono="{{ conductor.telfno_cond }}"
+                                onclick="abrirEditar(this)">
+                                <i class="fas fa-edit"></i> Editar
+                            </button>
+                            <a onclick="return confirm('¿Está seguro de eliminar este conductor?')"
+                               href="/Conductor/eliminar/{{ conductor.id }}/" class="btn btn-danger btn-sm">
+                                <i class="fas fa-trash"></i> Eliminar
+                            </a>
                         </td>
                     </tr>
                     {% endfor %}
@@ -76,20 +74,30 @@
                 <h5 class="modal-title">NUEVO CONDUCTOR</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
             </div>
-            <form action="/Conductor/guardar/" method="POST">
+            <form action="/Conductor/guardar/" method="POST" class="needs-validation" novalidate>
                 {% csrf_token %}
                 <div class="modal-body">
                     <div class="mb-3">
                         <label class="form-label"><b>NOMBRES:</b></label>
                         <input type="text" name="nombres_cond" class="form-control" required>
+                        <div class="invalid-feedback">
+                            Por favor ingrese los nombres.
+                        </div>
                     </div>
                     <div class="mb-3">
                         <label class="form-label"><b>APELLIDOS:</b></label>
                         <input type="text" name="apell_cond" class="form-control" required>
+                        <div class="invalid-feedback">
+                            Por favor ingrese los apellidos.
+                        </div>
                     </div>
                     <div class="mb-3">
                         <label class="form-label"><b>CÉDULA:</b></label>
-                        <input type="text" name="cedula_cond" class="form-control" required>
+                        <input type="text" name="cedula_cond" class="form-control"
+                            pattern="[0-9]{10}" maxlength="10" minlength="10" required>
+                        <div class="invalid-feedback">
+                            La cédula debe tener 10 dígitos numéricos.
+                        </div>
                     </div>
                     <div class="mb-3">
                         <label class="form-label"><b>TIPO DE LICENCIA:</b></label>
@@ -100,10 +108,17 @@
                             <option value="E">E</option>
                             <option value="F">F</option>
                         </select>
+                        <div class="invalid-feedback">
+                            Seleccione un tipo de licencia.
+                        </div>
                     </div>
                     <div class="mb-3">
-                        <label class="form-label"><b>TELÉFONO:</b></label>
-                        <input type="text" name="telfno_cond" class="form-control">
+                        <label class="form-label">TELÉFONO <small class="text-muted">(opcional)</small></label>
+                        <input type="text" name="telfno_cond" class="form-control"
+                            pattern="[0-9]{7,10}" maxlength="10">
+                        <div class="invalid-feedback">
+                            El teléfono debe ser numérico (7 a 10 dígitos).
+                        </div>
                     </div>
                 </div>
                 <div class="modal-footer">
@@ -123,21 +138,31 @@
                 <h5 class="modal-title">EDITAR CONDUCTOR</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
             </div>
-            <form action="/Conductor/procesarEdicionConductor/" method="POST">
+            <form action="/Conductor/procesarEdicionConductor/" method="POST" class="needs-validation" novalidate>
                 {% csrf_token %}
                 <input type="hidden" name="id_cond" id="edit_id_cond">
                 <div class="modal-body">
                     <div class="mb-3">
                         <label class="form-label"><b>NOMBRES:</b></label>
                         <input type="text" name="nombres_cond" id="edit_nombres" class="form-control" required>
+                        <div class="invalid-feedback">
+                            Por favor ingrese los nombres.
+                        </div>
                     </div>
                     <div class="mb-3">
                         <label class="form-label"><b>APELLIDOS:</b></label>
                         <input type="text" name="apell_cond" id="edit_apellidos" class="form-control" required>
+                        <div class="invalid-feedback">
+                            Por favor ingrese los apellidos.
+                        </div>
                     </div>
                     <div class="mb-3">
                         <label class="form-label"><b>CÉDULA:</b></label>
-                        <input type="text" name="cedula_cond" id="edit_cedula" class="form-control" required>
+                        <input type="text" name="cedula_cond" id="edit_cedula" class="form-control"
+                            pattern="[0-9]{10}" maxlength="10" minlength="10" required>
+                        <div class="invalid-feedback">
+                            La cédula debe tener 10 dígitos numéricos.
+                        </div>
                     </div>
                     <div class="mb-3">
                         <label class="form-label"><b>TIPO DE LICENCIA:</b></label>
@@ -148,10 +173,17 @@
                             <option value="E">E</option>
                             <option value="F">F</option>
                         </select>
+                        <div class="invalid-feedback">
+                            Seleccione un tipo de licencia.
+                        </div>
                     </div>
                     <div class="mb-3">
-                        <label class="form-label"><b>TELÉFONO:</b></label>
-                        <input type="text" name="telfno_cond" id="edit_telefono" class="form-control">
+                        <label class="form-label">TELÉFONO <small class="text-muted">(opcional)</small></label>
+                        <input type="text" name="telfno_cond" id="edit_telefono" class="form-control"
+                            pattern="[0-9]{7,10}" maxlength="10">
+                        <div class="invalid-feedback">
+                            El teléfono debe ser numérico (7 a 10 dígitos).
+                        </div>
                     </div>
                 </div>
                 <div class="modal-footer">
@@ -173,6 +205,21 @@ function abrirEditar(btn) {
     document.getElementById('edit_telefono').value = btn.dataset.telefono;
     new bootstrap.Modal(document.getElementById('modalEditarConductor')).show();
 }
+
+// Validación estilo Bootstrap (mensajes en rojo en vez del globito del navegador)
+(function () {
+    'use strict';
+    const forms = document.querySelectorAll('.needs-validation');
+    Array.from(forms).forEach(form => {
+        form.addEventListener('submit', event => {
+            if (!form.checkValidity()) {
+                event.preventDefault();
+                event.stopPropagation();
+            }
+            form.classList.add('was-validated');
+        }, false);
+    });
+})();
 
 document.addEventListener("DOMContentLoaded", function () {
     $('#tbl_conductores').DataTable({

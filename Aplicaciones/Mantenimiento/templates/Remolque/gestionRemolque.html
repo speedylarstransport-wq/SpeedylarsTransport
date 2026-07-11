@@ -86,12 +86,15 @@
                 <h5 class="modal-title">NUEVO REMOLQUE</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
             </div>
-            <form action="/Remolque/guardar/" method="POST">
+            <form action="/Remolque/guardar/" method="POST" class="needs-validation" novalidate>
                 {% csrf_token %}
                 <div class="modal-body">
                     <div class="mb-3">
                         <label class="form-label"><b>NOMBRE:</b></label>
-                        <input type="text" name="nombre" class="form-control" required>
+                        <input type="text" name="nombre" class="form-control" maxlength="150" required>
+                        <div class="invalid-feedback">
+                            Ingrese el nombre del remolque.
+                        </div>
                     </div>
                     <div class="mb-3">
                         <label class="form-label"><b>TIPO:</b></label>
@@ -100,19 +103,28 @@
                             <option value="furgon">Furgón</option>
                             <option value="plataforma">Plataforma</option>
                         </select>
+                        <div class="invalid-feedback">
+                            Seleccione un tipo.
+                        </div>
                     </div>
                     <div class="mb-3">
                         <label class="form-label"><b>MARCA:</b></label>
-                        <select name="marca_id" class="form-select">
-                            <option value="">-- Sin marca --</option>
+                        <select name="marca_id" class="form-select" required>
+                            <option value="">-- Seleccione --</option>
                             {% for marca in marcas %}
                             <option value="{{ marca.id }}">{{ marca.nombre_marca }}</option>
                             {% endfor %}
                         </select>
+                        <div class="invalid-feedback">
+                            Seleccione una marca.
+                        </div>
                     </div>
                     <div class="mb-3">
                         <label class="form-label"><b>AÑO:</b></label>
-                        <input type="number" name="anio" class="form-control">
+                        <input type="number" name="anio" class="form-control" min="1980" max="2100" required>
+                        <div class="invalid-feedback">
+                            Ingrese un año válido (1980 - 2100).
+                        </div>
                     </div>
                     <div class="mb-3">
                         <label class="form-label"><b>ESTADO:</b></label>
@@ -123,8 +135,8 @@
                         </select>
                     </div>
                     <div class="mb-3">
-                        <label class="form-label"><b>OBSERVACIONES:</b></label>
-                        <textarea name="observaciones" class="form-control" rows="2"></textarea>
+                        <label class="form-label"><b>OBSERVACIONES:</b> <small class="text-muted">(opcional)</small></label>
+                        <textarea name="observaciones" class="form-control" rows="2" maxlength="500"></textarea>
                     </div>
                 </div>
                 <div class="modal-footer">
@@ -144,13 +156,16 @@
                 <h5 class="modal-title">EDITAR REMOLQUE</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
             </div>
-            <form action="/Remolque/procesarEdicion/" method="POST">
+            <form action="/Remolque/procesarEdicion/" method="POST" class="needs-validation" novalidate>
                 {% csrf_token %}
                 <input type="hidden" name="id_remolque" id="edit_id_remolque">
                 <div class="modal-body">
                     <div class="mb-3">
                         <label class="form-label"><b>NOMBRE:</b></label>
-                        <input type="text" name="nombre" id="edit_nombre" class="form-control" required>
+                        <input type="text" name="nombre" id="edit_nombre" class="form-control" maxlength="150" required>
+                        <div class="invalid-feedback">
+                            Ingrese el nombre del remolque.
+                        </div>
                     </div>
                     <div class="mb-3">
                         <label class="form-label"><b>TIPO:</b></label>
@@ -159,19 +174,28 @@
                             <option value="furgon">Furgón</option>
                             <option value="plataforma">Plataforma</option>
                         </select>
+                        <div class="invalid-feedback">
+                            Seleccione un tipo.
+                        </div>
                     </div>
                     <div class="mb-3">
                         <label class="form-label"><b>MARCA:</b></label>
-                        <select name="marca_id" id="edit_marca" class="form-select">
-                            <option value="">-- Sin marca --</option>
+                        <select name="marca_id" id="edit_marca" class="form-select" required>
+                            <option value="">-- Seleccione --</option>
                             {% for marca in marcas %}
                             <option value="{{ marca.id }}">{{ marca.nombre_marca }}</option>
                             {% endfor %}
                         </select>
+                        <div class="invalid-feedback">
+                            Seleccione una marca.
+                        </div>
                     </div>
                     <div class="mb-3">
                         <label class="form-label"><b>AÑO:</b></label>
-                        <input type="number" name="anio" id="edit_anio" class="form-control">
+                        <input type="number" name="anio" id="edit_anio" class="form-control" min="1980" max="2100" required>
+                        <div class="invalid-feedback">
+                            Ingrese un año válido (1980 - 2100).
+                        </div>
                     </div>
                     <div class="mb-3">
                         <label class="form-label"><b>ESTADO:</b></label>
@@ -182,8 +206,8 @@
                         </select>
                     </div>
                     <div class="mb-3">
-                        <label class="form-label"><b>OBSERVACIONES:</b></label>
-                        <textarea name="observaciones" id="edit_observaciones" class="form-control" rows="2"></textarea>
+                        <label class="form-label"><b>OBSERVACIONES:</b> <small class="text-muted">(opcional)</small></label>
+                        <textarea name="observaciones" id="edit_observaciones" class="form-control" rows="2" maxlength="500"></textarea>
                     </div>
                 </div>
                 <div class="modal-footer">
@@ -207,6 +231,20 @@ function abrirEditar(btn) {
     new bootstrap.Modal(document.getElementById('modalEditarRemolque')).show();
 }
 
+// Validación estilo Bootstrap (mensajes en rojo en vez del globito del navegador)
+(function () {
+    'use strict';
+    const forms = document.querySelectorAll('.needs-validation');
+    Array.from(forms).forEach(form => {
+        form.addEventListener('submit', event => {
+            if (!form.checkValidity()) {
+                event.preventDefault();
+                event.stopPropagation();
+            }
+            form.classList.add('was-validated');
+        }, false);
+    });
+})();
 
 document.addEventListener("DOMContentLoaded", function () {
     $('#tbl_remolques').DataTable({

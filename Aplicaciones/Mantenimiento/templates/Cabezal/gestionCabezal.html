@@ -99,13 +99,17 @@
                 <h5 class="modal-title">NUEVO CABEZAL</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
             </div>
-            <form action="/Cabezal/guardar/" method="POST">
+            <form action="/Cabezal/guardar/" method="POST" class="needs-validation" novalidate>
                 {% csrf_token %}
                 <div class="modal-body">
                     <div class="row">
                         <div class="col-md-6 mb-3">
                             <label class="form-label"><b>PLACA:</b></label>
-                            <input type="text" name="placa" class="form-control" required>
+                            <input type="text" name="placa" class="form-control"
+                                maxlength="8" style="text-transform:uppercase" required>
+                            <div class="invalid-feedback">
+                                Ingrese la placa (máximo 8 caracteres).
+                            </div>
                         </div>
                         <div class="col-md-6 mb-3">
                             <label class="form-label"><b>MARCA:</b></label>
@@ -115,30 +119,37 @@
                                 <option value="{{ marca.id }}">{{ marca.nombre_marca }}</option>
                                 {% endfor %}
                             </select>
+                            <div class="invalid-feedback">
+                                Seleccione una marca.
+                            </div>
                         </div>
                         <div class="col-md-6 mb-3">
-                            <label class="form-label"><b>MODELO:</b></label>
-                            <input type="text" name="modelo" class="form-control">
+                            <label class="form-label"><b>MODELO:</b> <small class="text-muted">(opcional)</small></label>
+                            <input type="text" name="modelo" class="form-control" maxlength="100">
                         </div>
                         <div class="col-md-6 mb-3">
                             <label class="form-label"><b>AÑO:</b></label>
-                            <input type="number" name="anio" class="form-control" required>
+                            <input type="number" name="anio" class="form-control"
+                                min="1980" max="2100" required>
+                            <div class="invalid-feedback">
+                                Ingrese un año válido (1980 - 2100).
+                            </div>
                         </div>
                         <div class="col-md-6 mb-3">
-                            <label class="form-label"><b>NÚMERO DE MOTOR:</b></label>
-                            <input type="text" name="num_motor" class="form-control">
+                            <label class="form-label"><b>NÚMERO DE MOTOR:</b> <small class="text-muted">(opcional)</small></label>
+                            <input type="text" name="num_motor" class="form-control" maxlength="50">
                         </div>
                         <div class="col-md-6 mb-3">
-                            <label class="form-label"><b>NÚMERO DE CHASIS:</b></label>
-                            <input type="text" name="num_chasis" class="form-control">
+                            <label class="form-label"><b>NÚMERO DE CHASIS:</b> <small class="text-muted">(opcional)</small></label>
+                            <input type="text" name="num_chasis" class="form-control" maxlength="50">
                         </div>
                         <div class="col-md-6 mb-3">
-                            <label class="form-label"><b>NÚMERO DE DISCO:</b></label>
-                            <input type="text" name="num_disco" class="form-control">
+                            <label class="form-label"><b>NÚMERO DE DISCO:</b> <small class="text-muted">(opcional)</small></label>
+                            <input type="text" name="num_disco" class="form-control" maxlength="10">
                         </div>
                         <div class="col-md-6 mb-3">
-                            <label class="form-label"><b>COLOR:</b></label>
-                            <input type="text" name="color" class="form-control">
+                            <label class="form-label"><b>COLOR:</b> <small class="text-muted">(opcional)</small></label>
+                            <input type="text" name="color" class="form-control" maxlength="50">
                         </div>
                         <div class="col-md-6 mb-3">
                             <label class="form-label"><b>ESTADO:</b></label>
@@ -149,10 +160,10 @@
                             </select>
                         </div>
                         <div class="col-md-6 mb-3">
-                            <label class="form-label"><b>FECHA DE CADUCIDAD:</b></label>
+                            <label class="form-label"><b>FECHA DE CADUCIDAD:</b> <small class="text-muted">(opcional)</small></label>
                             <input type="date" name="fecha_caducidad" class="form-control">
                         </div>
-                        
+
                     </div>
                 </div>
                 <div class="modal-footer">
@@ -172,14 +183,18 @@
                 <h5 class="modal-title">EDITAR CABEZAL</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
             </div>
-            <form action="/Cabezal/procesarEdicion/" method="POST">
+            <form action="/Cabezal/procesarEdicion/" method="POST" class="needs-validation" novalidate>
                 {% csrf_token %}
                 <input type="hidden" name="id_cabezal" id="edit_id_cabezal">
                 <div class="modal-body">
                     <div class="row">
                         <div class="col-md-6 mb-3">
                             <label class="form-label"><b>PLACA:</b></label>
-                            <input type="text" name="placa" id="edit_placa" class="form-control" required>
+                            <input type="text" name="placa" id="edit_placa" class="form-control"
+                                maxlength="8" style="text-transform:uppercase" required>
+                            <div class="invalid-feedback">
+                                Ingrese la placa (máximo 8 caracteres).
+                            </div>
                         </div>
                         <div class="col-md-6 mb-3">
                             <label class="form-label"><b>MARCA:</b></label>
@@ -189,30 +204,37 @@
                                 <option value="{{ marca.id }}">{{ marca.nombre_marca }}</option>
                                 {% endfor %}
                             </select>
+                            <div class="invalid-feedback">
+                                Seleccione una marca.
+                            </div>
                         </div>
                         <div class="col-md-6 mb-3">
-                            <label class="form-label"><b>MODELO:</b></label>
-                            <input type="text" name="modelo" id="edit_modelo" class="form-control">
+                            <label class="form-label"><b>MODELO:</b> <small class="text-muted">(opcional)</small></label>
+                            <input type="text" name="modelo" id="edit_modelo" class="form-control" maxlength="100">
                         </div>
                         <div class="col-md-6 mb-3">
                             <label class="form-label"><b>AÑO:</b></label>
-                            <input type="number" name="anio" id="edit_anio" class="form-control" required>
+                            <input type="number" name="anio" id="edit_anio" class="form-control"
+                                min="1980" max="2100" required>
+                            <div class="invalid-feedback">
+                                Ingrese un año válido (1980 - 2100).
+                            </div>
                         </div>
                         <div class="col-md-6 mb-3">
-                            <label class="form-label"><b>NÚMERO DE MOTOR:</b></label>
-                            <input type="text" name="num_motor" id="edit_motor" class="form-control">
+                            <label class="form-label"><b>NÚMERO DE MOTOR:</b> <small class="text-muted">(opcional)</small></label>
+                            <input type="text" name="num_motor" id="edit_motor" class="form-control" maxlength="50">
                         </div>
                         <div class="col-md-6 mb-3">
-                            <label class="form-label"><b>NÚMERO DE CHASIS:</b></label>
-                            <input type="text" name="num_chasis" id="edit_chasis" class="form-control">
+                            <label class="form-label"><b>NÚMERO DE CHASIS:</b> <small class="text-muted">(opcional)</small></label>
+                            <input type="text" name="num_chasis" id="edit_chasis" class="form-control" maxlength="50">
                         </div>
                         <div class="col-md-6 mb-3">
-                            <label class="form-label"><b>NÚMERO DE DISCO:</b></label>
-                            <input type="text" name="num_disco" id="edit_disco" class="form-control">
+                            <label class="form-label"><b>NÚMERO DE DISCO:</b> <small class="text-muted">(opcional)</small></label>
+                            <input type="text" name="num_disco" id="edit_disco" class="form-control" maxlength="10">
                         </div>
                         <div class="col-md-6 mb-3">
-                            <label class="form-label"><b>COLOR:</b></label>
-                            <input type="text" name="color" id="edit_color" class="form-control">
+                            <label class="form-label"><b>COLOR:</b> <small class="text-muted">(opcional)</small></label>
+                            <input type="text" name="color" id="edit_color" class="form-control" maxlength="50">
                         </div>
                         <div class="col-md-6 mb-3">
                             <label class="form-label"><b>ESTADO:</b></label>
@@ -223,10 +245,10 @@
                             </select>
                         </div>
                         <div class="col-md-6 mb-3">
-                            <label class="form-label"><b>FECHA DE CADUCIDAD:</b></label>
+                            <label class="form-label"><b>FECHA DE CADUCIDAD:</b> <small class="text-muted">(opcional)</small></label>
                             <input type="date" name="fecha_caducidad" id="edit_caducidad" class="form-control">
                         </div>
-                        
+
                     </div>
                 </div>
                 <div class="modal-footer">
@@ -254,6 +276,20 @@ function abrirEditar(btn) {
     new bootstrap.Modal(document.getElementById('modalEditarCabezal')).show();
 }
 
+// Validación estilo Bootstrap (mensajes en rojo en vez del globito del navegador)
+(function () {
+    'use strict';
+    const forms = document.querySelectorAll('.needs-validation');
+    Array.from(forms).forEach(form => {
+        form.addEventListener('submit', event => {
+            if (!form.checkValidity()) {
+                event.preventDefault();
+                event.stopPropagation();
+            }
+            form.classList.add('was-validated');
+        }, false);
+    });
+})();
 
 document.addEventListener("DOMContentLoaded", function () {
     $('#tbl_cabezales').DataTable({
