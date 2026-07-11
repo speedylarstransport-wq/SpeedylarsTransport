@@ -431,7 +431,7 @@ def gestionCombustible(request):
 def guardarCombustible(request):
     CargaCombustible.objects.create(
         activo_id=request.POST['activo_id'],
-        registrado_por_id=request.user,  # temporal hasta que esté el login
+        registrado_por=request.user,
         fecha=request.POST['fecha'],
         km_odometro=request.POST['km_odometro'],
         litros=request.POST['litros'],

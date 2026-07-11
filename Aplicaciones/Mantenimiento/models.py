@@ -275,32 +275,27 @@ class CargaCombustible(models.Model):
     activo = models.ForeignKey(Activo, on_delete=models.CASCADE)
     registrado_por = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.PROTECT)
     fecha = models.DateField()
-    km_odometro = models.IntegerField()
+    km_odometro = models.DecimalField(max_digits=10, decimal_places=2)  # ✅ cambiado
     litros = models.DecimalField(max_digits=8, decimal_places=2)
     costo_total = models.DecimalField(max_digits=10, decimal_places=2)
     observaciones = models.TextField(blank=True, null=True)
 
     class Meta:
         db_table = 'CargaCombustible'
-        
 
     def __str__(self):
         return f'{self.activo} - {self.fecha} - {self.litros}L'
 
 
-# =============================================
-# KM MANUAL
-# =============================================
 class KmManual(models.Model):
     activo = models.ForeignKey(Activo, on_delete=models.CASCADE)
     registrado_por = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.PROTECT)
     fecha = models.DateField()
-    km_odometro = models.IntegerField()
+    km_odometro = models.DecimalField(max_digits=10, decimal_places=2)  # ✅ cambiado
     observaciones = models.TextField(blank=True, null=True)
 
     class Meta:
         db_table = 'KmManual'
-        
 
     def __str__(self):
         return f'{self.activo} - {self.fecha} - {self.km_odometro} km'

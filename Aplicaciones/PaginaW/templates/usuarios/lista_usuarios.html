@@ -275,15 +275,13 @@ function abrirModalEliminar(usuarioId, usuarioEmail) {
 $(function () {
     $('#mitablaUsuarios').DataTable({
         language: {
-            url: '//cdn.datatables.net/plug-ins/1.13.5/i18n/es-ES.json'
+            url: "{% static 'json/es-ES.json' %}"
         },
         dom: 'Bfrtip',
         buttons: [
-            'copyHtml5',
             'excelHtml5',
             'csvHtml5',
-            'pdfHtml5',
-            'print'
+            'pdfHtml5'
         ],
         pageLength: 10,
         responsive: true,
